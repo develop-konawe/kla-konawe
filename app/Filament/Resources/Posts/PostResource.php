@@ -20,7 +20,11 @@ class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
+    protected static ?string $navigationLabel = 'Berita';
+    protected static ?string $modelLabel = 'Berita';
+    protected static ?string $pluralModelLabel = 'Berita';
+    protected static \UnitEnum|string|null $navigationGroup = 'Publikasi';
 
     protected static ?string $recordTitleAttribute = 'title';
 

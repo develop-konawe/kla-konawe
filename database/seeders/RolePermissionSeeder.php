@@ -19,7 +19,6 @@ class RolePermissionSeeder extends Seeder
         $permissions = [
             'pages.view', 'pages.create', 'pages.update', 'pages.publish',
             'posts.view', 'posts.create', 'posts.update', 'posts.publish',
-            'events.manage', 
             'publications.manage', 'publications.publish',
             'services.view', 'services.manage',
             'facilities.view', 'facilities.manage', 'facilities.verify',
@@ -43,7 +42,7 @@ class RolePermissionSeeder extends Seeder
         $roleAdminPortal->givePermissionTo([
             'pages.view', 'pages.create', 'pages.update', 'pages.publish',
             'posts.view', 'posts.create', 'posts.update', 'posts.publish',
-            'events.manage', 'publications.manage', 'publications.publish',
+            'publications.manage', 'publications.publish',
             'services.view', 'services.manage',
             'facilities.view', 'facilities.manage', 'facilities.verify',
             'forum.manage',

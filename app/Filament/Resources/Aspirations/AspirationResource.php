@@ -18,7 +18,11 @@ class AspirationResource extends Resource
 {
     protected static ?string $model = Aspiration::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleBottomCenterText;
+    protected static ?string $navigationLabel = 'Aspirasi';
+    protected static ?string $modelLabel = 'Aspirasi';
+    protected static ?string $pluralModelLabel = 'Aspirasi';
+    protected static \UnitEnum|string|null $navigationGroup = 'Interaksi Warga';
 
     protected static ?string $recordTitleAttribute = 'title';
 

@@ -18,7 +18,11 @@ class PublicationResource extends Resource
 {
     protected static ?string $model = Publication::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+    protected static ?string $navigationLabel = 'Publikasi & Laporan';
+    protected static ?string $modelLabel = 'Publikasi & Laporan';
+    protected static ?string $pluralModelLabel = 'Publikasi & Laporan';
+    protected static \UnitEnum|string|null $navigationGroup = 'Publikasi';
 
     protected static ?string $recordTitleAttribute = 'title';
 

@@ -20,7 +20,11 @@ class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+    protected static ?string $navigationLabel = 'Halaman';
+    protected static ?string $modelLabel = 'Halaman';
+    protected static ?string $pluralModelLabel = 'Halaman';
+    protected static \UnitEnum|string|null $navigationGroup = 'Konten Utama';
 
     protected static ?string $recordTitleAttribute = 'title';
 

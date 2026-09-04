@@ -18,7 +18,11 @@ class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
+    protected static ?string $navigationLabel = 'Layanan Publik';
+    protected static ?string $modelLabel = 'Layanan Publik';
+    protected static ?string $pluralModelLabel = 'Layanan Publik';
+    protected static \UnitEnum|string|null $navigationGroup = 'Layanan & Fasilitas';
 
     protected static ?string $recordTitleAttribute = 'name';
 

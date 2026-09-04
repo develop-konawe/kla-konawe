@@ -20,7 +20,11 @@ class ForumTopicResource extends Resource
 {
     protected static ?string $model = ForumTopic::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
+    protected static ?string $navigationLabel = 'Topik Forum';
+    protected static ?string $modelLabel = 'Topik Forum';
+    protected static ?string $pluralModelLabel = 'Topik Forum';
+    protected static \UnitEnum|string|null $navigationGroup = 'Interaksi Warga';
 
     protected static ?string $recordTitleAttribute = 'title';
 
