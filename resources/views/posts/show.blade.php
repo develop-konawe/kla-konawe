@@ -6,8 +6,12 @@
         </a>
         
         <article class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-            @if($post->featured_image)
-            <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-64 md:h-96 object-cover">
+            @php
+                $showImg = data_get($post, 'featured_image');
+                $showImgSrc = $showImg ? (str_starts_with($showImg, 'http') ? $showImg : Storage::url($showImg)) : null;
+            @endphp
+            @if($showImgSrc)
+            <img src="{{ $showImgSrc }}" alt="{{ data_get($post, 'title') }}" class="w-full h-64 md:h-96 object-cover">
             @endif
             
             <div class="p-8 md:p-12">

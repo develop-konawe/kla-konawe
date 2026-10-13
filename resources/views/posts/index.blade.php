@@ -12,21 +12,37 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($posts as $post)
-            <a href="/berita/{{ $post->slug }}" class="group bg-white rounded-3xl shadow-sm hover:shadow-xl hover-lift transition overflow-hidden border border-gray-100 flex flex-col h-full">
+            @php
+                $postTitle = data_get($post, 'title');
+                $postSlug = data_get($post, 'slug');
+                $postExcerpt = data_get($post, 'excerpt');
+                $postImg = data_get($post, 'featured_image');
+                $postImgSrc = $postImg ? (str_starts_with($postImg, 'http') ? $postImg : Storage::url($postImg)) : null;
+                $postUrl = data_get($post, 'url') ?: "/berita/{$postSlug}";
+                $isExternal = (bool) data_get($post, 'url');
+                $categoryName = data_get($post, 'category.name') ?: (data_get($post, 'category') ?: 'Umum');
+                $pubDate = data_get($post, 'published_at');
+                if ($pubDate && !($pubDate instanceof \Carbon\Carbon)) {
+                    try { $pubDate = \Carbon\Carbon::parse($pubDate); } catch (\Throwable) { $pubDate = null; }
+                }
+            @endphp
+            <a href="{{ $postUrl }}" @if($isExternal) target="_blank" rel="noopener noreferrer" @endif class="group bg-white rounded-3xl shadow-sm hover:shadow-xl hover-lift transition overflow-hidden border border-gray-100 flex flex-col h-full">
                 <div class="relative overflow-hidden">
-                    @if($post->featured_image)
-                    <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500">
+                    @if($postImgSrc)
+                    <img src="{{ $postImgSrc }}" alt="{{ $postTitle }}" class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500">
                     @else
                     <div class="w-full h-56 bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center text-primary-300 group-hover:scale-105 transition-transform duration-500">
                         <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
                     @endif
                     <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary-700 shadow-sm">
-                        {{ $post->category?->name ?? 'Umum' }}
+                        {{ $categoryName }}
                     </div>
+                    @if($pubDate)
                     <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-gray-600 shadow-sm">
-                        {{ $post->published_at?->format('d M Y') }}
+                        {{ $pubDate->format('d M Y') }}
                     </div>
+                    @endif
                 </div>
                 <div class="p-6 flex-grow flex flex-col justify-between">
                     <div>

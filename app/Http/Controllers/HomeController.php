@@ -2,42 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
-use Illuminate\Support\Facades\Http;
-use App\Models\Service;
 use App\Models\Facility;
+use App\Models\Post;
+use App\Models\Service;
+use App\Services\BeritaService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(BeritaService $beritaService)
     {
-        // Get latest published news
-        $latestNews = Post::where('status', 'published')
-            ->orderBy('published_at', 'desc')
-            ->take(3)
-            ->get();
-            
-        // Get upcoming events from API
-        $upcomingEvents = collect();
-        try {
-            $response = Http::get(env('BERITA_BASE_URL') . '/agenda', [
-                'api_key' => env('BERITA_API_KEY')
-            ]);
-            
-            if ($response->successful()) {
-                $upcomingEvents = collect($response->json('data'))->take(3);
-            }
-        } catch (\Exception $e) {
-            // Silently fail or log error
+        // Get latest news from Berita API with graceful fallback to local database
+        $latestNews = $beritaService->getLatest(3);
+
+        if (empty($latestNews)) {
+            $latestNews = Post::where('status', 'published')
+                ->orderBy('published_at', 'desc')
+                ->take(3)
+                ->get()
+                ->map(fn ($post) => [
+                    'id'             => $post->id,
+                    'title'          => $post->title,
+                    'slug'           => $post->slug,
+                    'excerpt'        => $post->excerpt,
+                    'featured_image' => $post->featured_image,
+                    'published_at'   => $post->published_at?->toISOString(),
+                ])
+                ->toArray();
         }
-            
-        // Get quick stats
+
+        // Get upcoming events from Berita API
+        $upcomingEvents = collect($beritaService->getAgenda(['per_page' => 3]))
+            ->take(3)
+            ->toArray();
+
+        // Quick stats
         $stats = [
-            'services' => Service::where('status', 'published')->count(),
+            'services'   => Service::where('status', 'published')->count(),
             'facilities' => Facility::where('is_child_friendly', true)->count(),
         ];
 
-        return view('home', compact('latestNews', 'upcomingEvents', 'stats'));
+        return Inertia::render('Home', [
+            'latestNews'     => $latestNews,
+            'upcomingEvents' => $upcomingEvents,
+            'stats'          => $stats,
+        ]);
     }
 }

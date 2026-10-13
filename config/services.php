@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'berita' => [
+        'base_url' => env('BERITA_BASE_URL', 'https://berita.konawekab.go.id/api/v1'),
+        'api_key' => env('BERITA_API_KEY'),
+        'timeout' => (int) env('BERITA_TIMEOUT', 10),
+    ],
+
 ];

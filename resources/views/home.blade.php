@@ -168,23 +168,38 @@
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 @forelse($latestNews as $news)
-                <a href="/berita/{{ $news->slug }}" class="group bg-white rounded-3xl shadow-sm hover:shadow-xl hover-lift transition overflow-hidden border border-gray-100 flex flex-col h-full">
+                @php
+                    $newsTitle = data_get($news, 'title');
+                    $newsSlug = data_get($news, 'slug');
+                    $newsExcerpt = data_get($news, 'excerpt');
+                    $newsImg = data_get($news, 'featured_image');
+                    $newsImgSrc = $newsImg ? (str_starts_with($newsImg, 'http') ? $newsImg : Storage::url($newsImg)) : null;
+                    $newsUrl = data_get($news, 'url') ?: "/berita/{$newsSlug}";
+                    $isExternal = (bool) data_get($news, 'url');
+                    $pubDate = data_get($news, 'published_at');
+                    if ($pubDate && !($pubDate instanceof \Carbon\Carbon)) {
+                        try { $pubDate = \Carbon\Carbon::parse($pubDate); } catch (\Throwable) { $pubDate = null; }
+                    }
+                @endphp
+                <a href="{{ $newsUrl }}" @if($isExternal) target="_blank" rel="noopener noreferrer" @endif class="group bg-white rounded-3xl shadow-sm hover:shadow-xl hover-lift transition overflow-hidden border border-gray-100 flex flex-col h-full">
                     <div class="relative overflow-hidden">
-                        @if($news->featured_image)
-                        <img src="{{ Storage::url($news->featured_image) }}" alt="{{ $news->title }}" class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500">
+                        @if($newsImgSrc)
+                        <img src="{{ $newsImgSrc }}" alt="{{ $newsTitle }}" class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500">
                         @else
                         <div class="w-full h-56 bg-primary-100 flex items-center justify-center text-primary-300 group-hover:scale-105 transition-transform duration-500">
                             <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
                         @endif
+                        @if($pubDate)
                         <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary-700 shadow-sm">
-                            {{ $news->published_at?->format('d M Y') }}
+                            {{ $pubDate->format('d M Y') }}
                         </div>
+                        @endif
                     </div>
                     <div class="p-6 flex-grow flex flex-col justify-between">
                         <div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition">{{ $news->title }}</h3>
-                            <p class="text-gray-600 line-clamp-3 font-medium">{{ $news->excerpt }}</p>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition">{{ $newsTitle }}</h3>
+                            <p class="text-gray-600 line-clamp-3 font-medium">{{ $newsExcerpt }}</p>
                         </div>
                         <div class="mt-6 flex items-center text-primary-600 font-bold text-sm">
                             Baca selengkapnya 
