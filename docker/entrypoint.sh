@@ -49,8 +49,9 @@ mkdir -p /var/www/html/storage/framework/cache/data \
          /var/www/html/storage/logs \
          /var/www/html/bootstrap/cache
 
-# 3. Create storage symlink
+# 3. Create storage symlink & discover packages
 php artisan storage:link --force 2>/dev/null || true
+php artisan package:discover --ansi 2>/dev/null || true
 
 # 4. Fix permissions
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
