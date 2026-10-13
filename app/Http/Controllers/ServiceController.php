@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ServiceController extends Controller
 {
@@ -11,15 +12,18 @@ class ServiceController extends Controller
     {
         $query = Service::where('status', 'published');
 
-        if ($request->has('search')) {
+        if ($request->has('search') && $request->search) {
             $search = $request->search;
             $query->where('name', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%");
         }
 
-        $services = $query->orderBy('name', 'asc')->paginate(12);
+        $services = $query->orderBy('name', 'asc')->paginate(12)->withQueryString();
 
-        return view('services.index', compact('services'));
+        return Inertia::render('Services/Index', [
+            'services' => $services,
+            'search'   => $request->search ?? '',
+        ]);
     }
 
     public function show($slug)
@@ -28,6 +32,8 @@ class ServiceController extends Controller
                           ->where('status', 'published')
                           ->firstOrFail();
 
-        return view('services.show', compact('service'));
+        return Inertia::render('Services/Show', [
+            'service' => $service,
+        ]);
     }
 }

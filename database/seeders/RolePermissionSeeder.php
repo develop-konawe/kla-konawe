@@ -2,8 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -13,13 +18,13 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Permissions based on documentation
         $permissions = [
             'pages.view', 'pages.create', 'pages.update', 'pages.publish',
             'posts.view', 'posts.create', 'posts.update', 'posts.publish',
-            'publications.manage', 'publications.publish',
+            'events.manage', 'publications.manage', 'publications.publish',
             'services.view', 'services.manage',
             'facilities.view', 'facilities.manage', 'facilities.verify',
             'forum.manage',
@@ -30,19 +35,19 @@ class RolePermissionSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            \Spatie\Permission\Models\Permission::create(['name' => $permission]);
+            Permission::findOrCreate($permission);
         }
 
         // Roles
-        $roleSuperAdmin = \Spatie\Permission\Models\Role::create(['name' => 'super_admin']);
+        $roleSuperAdmin = Role::findOrCreate('super_admin');
         // Super admin gets all permissions
-        $roleSuperAdmin->givePermissionTo(\Spatie\Permission\Models\Permission::all());
+        $roleSuperAdmin->syncPermissions(Permission::all());
 
-        $roleAdminPortal = \Spatie\Permission\Models\Role::create(['name' => 'admin_portal']);
-        $roleAdminPortal->givePermissionTo([
+        $roleAdminPortal = Role::findOrCreate('admin_portal');
+        $roleAdminPortal->syncPermissions([
             'pages.view', 'pages.create', 'pages.update', 'pages.publish',
             'posts.view', 'posts.create', 'posts.update', 'posts.publish',
-            'publications.manage', 'publications.publish',
+            'events.manage', 'publications.manage', 'publications.publish',
             'services.view', 'services.manage',
             'facilities.view', 'facilities.manage', 'facilities.verify',
             'forum.manage',
@@ -51,49 +56,50 @@ class RolePermissionSeeder extends Seeder
             'users.manage'
         ]);
 
-        $roleContentEditor = \Spatie\Permission\Models\Role::create(['name' => 'content_editor']);
-        $roleContentEditor->givePermissionTo([
+        $roleContentEditor = Role::findOrCreate('content_editor');
+        $roleContentEditor->syncPermissions([
             'pages.view', 'pages.create', 'pages.update',
             'posts.view', 'posts.create', 'posts.update',
             'events.manage', 'publications.manage'
         ]);
 
-        $roleContentReviewer = \Spatie\Permission\Models\Role::create(['name' => 'content_reviewer']);
-        $roleContentReviewer->givePermissionTo([
+        $roleContentReviewer = Role::findOrCreate('content_reviewer');
+        $roleContentReviewer->syncPermissions([
             'pages.view', 'pages.publish',
             'posts.view', 'posts.publish',
             'publications.publish'
         ]);
 
-        $roleServiceManager = \Spatie\Permission\Models\Role::create(['name' => 'service_manager']);
-        $roleServiceManager->givePermissionTo(['services.view', 'services.manage']);
+        $roleServiceManager = Role::findOrCreate('service_manager');
+        $roleServiceManager->syncPermissions(['services.view', 'services.manage']);
 
-        $roleFacilityManager = \Spatie\Permission\Models\Role::create(['name' => 'facility_manager']);
-        $roleFacilityManager->givePermissionTo(['facilities.view', 'facilities.manage', 'facilities.verify']);
+        $roleFacilityManager = Role::findOrCreate('facility_manager');
+        $roleFacilityManager->syncPermissions(['facilities.view', 'facilities.manage', 'facilities.verify']);
 
-        $roleForumManager = \Spatie\Permission\Models\Role::create(['name' => 'forum_manager']);
-        $roleForumManager->givePermissionTo(['forum.manage']);
+        $roleForumManager = Role::findOrCreate('forum_manager');
+        $roleForumManager->syncPermissions(['forum.manage']);
 
-        $roleAspirationOfficer = \Spatie\Permission\Models\Role::create(['name' => 'aspiration_officer']);
-        $roleAspirationOfficer->givePermissionTo(['aspirations.view', 'aspirations.manage', 'aspirations.publish']);
+        $roleAspirationOfficer = Role::findOrCreate('aspiration_officer');
+        $roleAspirationOfficer->syncPermissions(['aspirations.view', 'aspirations.manage', 'aspirations.publish']);
 
-        $roleComplaintOfficer = \Spatie\Permission\Models\Role::create(['name' => 'complaint_officer']);
-        $roleComplaintOfficer->givePermissionTo([
+        $roleComplaintOfficer = Role::findOrCreate('complaint_officer');
+        $roleComplaintOfficer->syncPermissions([
             'complaints.view', 'complaints.assign', 'complaints.follow_up', 'complaints.close', 'complaints.export'
         ]);
 
-        $roleLeader = \Spatie\Permission\Models\Role::create(['name' => 'leader']);
-        $roleLeader->givePermissionTo(['statistics.view', 'statistics.manage', 'statistics.publish']);
+        $roleLeader = Role::findOrCreate('leader');
+        $roleLeader->syncPermissions(['statistics.view', 'statistics.manage', 'statistics.publish']);
 
-        // Create default Super Admin user
-        $admin = \App\Models\User::firstOrCreate(
+        // Create or update default Super Admin user
+        $admin = User::updateOrCreate(
             ['email' => 'admin@portalkla.local'],
             [
                 'name' => 'Super Admin',
-                'password' => bcrypt('password'),
+                'username' => 'admin',
+                'password' => Hash::make('password'),
                 'is_active' => true,
             ]
         );
-        $admin->assignRole('super_admin');
+        $admin->syncRoles(['super_admin']);
     }
 }

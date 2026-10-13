@@ -22,9 +22,15 @@
             @forelse($services as $service)
             <a href="/layanan/{{ $service->slug }}" class="group bg-white rounded-3xl shadow-sm hover:shadow-xl hover-lift transition border border-gray-100 flex flex-col h-full overflow-hidden">
                 <div class="p-8 flex-grow">
+                    @if($service->image)
+                    <div class="h-48 -mx-8 -mt-8 mb-6 overflow-hidden bg-gray-50 flex items-center justify-center">
+                        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" class="w-full h-full object-contain group-hover:scale-105 transition duration-500">
+                    </div>
+                    @else
                     <div class="w-12 h-12 rounded-2xl bg-primary-100 text-primary-600 flex items-center justify-center mb-5 group-hover:bg-primary-500 group-hover:text-white transition">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                     </div>
+                    @endif
                     <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition leading-tight">{{ $service->name }}</h3>
                     <p class="text-gray-600 line-clamp-3 font-medium">{!! strip_tags($service->description) !!}</p>
                     

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Facility;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class FacilityController extends Controller
 {
@@ -11,7 +12,7 @@ class FacilityController extends Controller
     {
         $query = Facility::query();
 
-        if ($request->has('search')) {
+        if ($request->has('search') && $request->search) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -20,15 +21,20 @@ class FacilityController extends Controller
             });
         }
 
-        $facilities = $query->orderBy('name', 'asc')->paginate(12);
+        $facilities = $query->orderBy('name', 'asc')->paginate(12)->withQueryString();
 
-        return view('facilities.index', compact('facilities'));
+        return Inertia::render('Facilities/Index', [
+            'facilities' => $facilities,
+            'search'     => $request->search ?? '',
+        ]);
     }
 
     public function show($slug)
     {
         $facility = Facility::where('slug', $slug)->firstOrFail();
 
-        return view('facilities.show', compact('facility'));
+        return Inertia::render('Facilities/Show', [
+            'facility' => $facility,
+        ]);
     }
 }

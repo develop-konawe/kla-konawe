@@ -11,9 +11,7 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
                 <div class="md:col-span-2">
                     <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-12 h-12 bg-white text-primary-600 rounded-full flex items-center justify-center font-black text-2xl shadow-lg">
-                            KLA
-                        </div>
+                        <img src="{{ asset('images/logo_konawe.png') }}" alt="Logo Konawe" class="w-12 h-12 object-contain filter drop-shadow-lg">
                         <span class="font-black text-2xl tracking-tight text-primary-50">Portal KLA Konawe</span>
                     </div>
                     <p class="text-primary-200 mb-6 max-w-sm leading-relaxed font-medium">

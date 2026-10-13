@@ -22,6 +22,11 @@
             @forelse($facilities as $facility)
             <a href="/fasilitas/{{ $facility->slug }}" class="group bg-white rounded-3xl shadow-sm hover:shadow-xl hover-lift transition border border-gray-100 flex flex-col h-full overflow-hidden">
                 <div class="p-8 flex-grow">
+                    @if($facility->image)
+                    <div class="h-48 -mx-8 -mt-8 mb-6 overflow-hidden bg-gray-50 flex items-center justify-center">
+                        <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}" class="w-full h-full object-contain group-hover:scale-105 transition duration-500">
+                    </div>
+                    @endif
                     <div class="flex items-center justify-between mb-4">
                         <div class="w-12 h-12 rounded-2xl bg-secondary-100 text-secondary-600 flex items-center justify-center group-hover:bg-secondary-500 group-hover:text-white transition">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>

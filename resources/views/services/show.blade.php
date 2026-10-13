@@ -6,6 +6,11 @@
         </a>
         
         <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            @if($service->image)
+            <div class="w-full bg-gray-50 flex items-center justify-center p-8 border-b border-gray-100">
+                <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" class="max-w-full max-h-96 object-contain rounded-2xl shadow-sm">
+            </div>
+            @endif
             <div class="bg-gradient-to-r from-primary-50 to-primary-100 p-8 md:p-10 border-b border-primary-100">
                 <h1 class="text-3xl md:text-4xl font-black text-gray-900 mb-2 tracking-tight">{{ $service->name }}</h1>
                 @if($service->organization)

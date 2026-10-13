@@ -25,6 +25,10 @@ class FacilityForm
                     ->required(),
                 RichEditor::make('description')
                     ->columnSpanFull(),
+                \Filament\Forms\Components\FileUpload::make('image')
+                    ->image()
+                    ->directory('facilities')
+                    ->columnSpanFull(),
                 TextInput::make('category'),
                 Textarea::make('address')
                     ->columnSpanFull(),

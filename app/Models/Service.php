@@ -16,6 +16,7 @@ class Service extends Model
         'contact_info',
         'working_hours',
         'status',
+        'image',
     ];
 
     protected function casts(): array

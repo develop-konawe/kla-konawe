@@ -4,9 +4,7 @@
             <!-- Logo -->
             <div class="flex items-center">
                 <a href="/" class="flex-shrink-0 flex items-center space-x-3 group">
-                    <div class="w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-md group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
+                    <img src="{{ asset('images/logo_konawe.png') }}" alt="Logo Konawe" class="w-10 h-10 object-contain group-hover:scale-110 transition-transform drop-shadow-md">
                     <span class="font-extrabold text-xl text-primary-800 hidden sm:block tracking-tight">KLA Konawe</span>
                 </a>
             </div>

@@ -19,6 +19,7 @@ class Facility extends Model
         'is_child_friendly',
         'verified_at',
         'verified_by',
+        'image',
     ];
 
     protected function casts(): array

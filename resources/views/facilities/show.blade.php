@@ -6,6 +6,11 @@
         </a>
         
         <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            @if($facility->image)
+            <div class="w-full bg-gray-50 flex items-center justify-center p-8 border-b border-gray-100">
+                <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}" class="max-w-full max-h-96 object-contain rounded-2xl shadow-sm">
+            </div>
+            @endif
             <div class="bg-gradient-to-r from-secondary-50 to-secondary-100 p-8 md:p-10 border-b border-secondary-100">
                 <div class="flex flex-wrap items-center gap-3 mb-3">
                     @if($facility->is_child_friendly)

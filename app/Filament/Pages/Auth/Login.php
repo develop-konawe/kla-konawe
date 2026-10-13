@@ -2,16 +2,18 @@
 
 namespace App\Filament\Pages\Auth;
 
-use Filament\Forms\Form;
-use Filament\Forms\Components\TextInput;
+use App\Models\User;
 use Filament\Auth\Pages\Login as BaseLogin;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Component;
+use Illuminate\Validation\ValidationException;
 
 class Login extends BaseLogin
 {
-    protected function getEmailFormComponent(): \Filament\Schemas\Components\Component
+    protected function getEmailFormComponent(): Component
     {
-        return \Filament\Forms\Components\TextInput::make('username')
-            ->label('Username')
+        return TextInput::make('username')
+            ->label('Username / Email')
             ->required()
             ->autocomplete()
             ->autofocus()
@@ -20,16 +22,35 @@ class Login extends BaseLogin
 
     protected function getCredentialsFromFormData(array $data): array
     {
+        $login = $data['username'];
+
+        // Cek apakah input cocok dengan email atau username
+        $user = User::where('username', $login)
+            ->orWhere('email', $login)
+            ->first();
+
+        if ($user) {
+            $loginType = ($user->email === $login) ? 'email' : 'username';
+
+            return [
+                $loginType => $login,
+                'password' => $data['password'],
+            ];
+        }
+
+        $loginType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
         return [
-            'username' => $data['username'],
+            $loginType => $login,
             'password' => $data['password'],
         ];
     }
 
     protected function throwFailureValidationException(): never
     {
-        throw \Illuminate\Validation\ValidationException::withMessages([
+        throw ValidationException::withMessages([
             'data.username' => __('filament-panels::auth/pages/login.messages.failed'),
         ]);
     }
 }
+

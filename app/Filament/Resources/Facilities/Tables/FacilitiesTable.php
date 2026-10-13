@@ -15,6 +15,8 @@ class FacilitiesTable
     {
         return $table
             ->columns([
+                \Filament\Tables\Columns\ImageColumn::make('image')
+                    ->circular(),
                 TextColumn::make('organization.name')
                     ->searchable(),
                 TextColumn::make('name')

@@ -23,6 +23,10 @@ class ServiceForm
                     ->required(),
                 RichEditor::make('description')
                     ->columnSpanFull(),
+                \Filament\Forms\Components\FileUpload::make('image')
+                    ->image()
+                    ->directory('services')
+                    ->columnSpanFull(),
                 TextInput::make('type'),
                 TextInput::make('contact_info'),
                 TextInput::make('working_hours'),
