@@ -41,4 +41,11 @@ return [
         'timeout' => (int) env('BERITA_TIMEOUT', 10),
     ],
 
+    'orpeg' => [
+        'base_url' => env('ORPEG_BASE_URL', 'https://orpeg.konawekab.go.id/api/v1'),
+        'username' => env('ORPEG_USERNAME', 'kominfo'),
+        'password' => env('ORPEG_PASSWORD', 'bersahaja2030'),
+        'timeout' => (int) env('ORPEG_TIMEOUT', 15),
+    ],
+
 ];

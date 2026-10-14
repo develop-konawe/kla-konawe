@@ -19,67 +19,36 @@ class DummyDataSeeder extends Seeder
         Schema::disableForeignKeyConstraints();
 
         // ---------------------------------------------------------------------
-        // 1. Organisasi / Instansi Terkait KLA Konawe
+        // 1. Organisasi / Instansi Terkait KLA Konawe (API Orpeg / Fallback)
         // ---------------------------------------------------------------------
-        $this->command->info('1/10 Seeding Organisasi Terkait KLA...');
-        DB::table('organizations')->truncate();
+        $this->command->info('1/10 Seeding Organisasi Terkait KLA (API Orpeg / Fallback)...');
         
-        $organizations = [
-            [
-                'name' => 'Dinas Pemberdayaan Perempuan dan Perlindungan Anak (DP3A) Kab. Konawe',
-                'type' => 'dinas',
-                'code' => 'OPD-DP3A-KNW',
-                'address' => 'Jl. Inolobunggadue No. 12, Unaaha, Konawe',
-                'phone' => '(0408) 2421001',
-                'email' => 'dp3a@konawekab.go.id',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Dinas Kesehatan Kab. Konawe',
-                'type' => 'dinas',
-                'code' => 'OPD-DINKES-KNW',
-                'address' => 'Kompleks Perkantoran Pemkab Konawe, Unaaha',
-                'phone' => '(0408) 2421002',
-                'email' => 'dinkes@konawekab.go.id',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Dinas Pendidikan dan Kebudayaan Kab. Konawe',
-                'type' => 'dinas',
-                'code' => 'OPD-DIKBUD-KNW',
-                'address' => 'Jl. Diponegoro No. 45, Unaaha, Konawe',
-                'phone' => '(0408) 2421003',
-                'email' => 'dikbud@konawekab.go.id',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Dinas Kependudukan dan Pencatatan Sipil Kab. Konawe',
-                'type' => 'dinas',
-                'code' => 'OPD-DUKCAPIL-KNW',
-                'address' => 'Jl. Poros Unaaha - Kendari Km. 2, Konawe',
-                'phone' => '(0408) 2421004',
-                'email' => 'disdukcapil@konawekab.go.id',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Dinas Sosial Kab. Konawe',
-                'type' => 'dinas',
-                'code' => 'OPD-DINSOS-KNW',
-                'address' => 'Jl. Jenderal Sudirman No. 8, Unaaha, Konawe',
-                'phone' => '(0408) 2421005',
-                'email' => 'dinsos@konawekab.go.id',
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        $orpegService = app(\App\Services\OrpegService::class);
+        $syncResult = $orpegService->syncUnitsToDatabase();
+
+        if ($syncResult['success'] && $syncResult['total'] > 0) {
+            $this->command->info("   -> Sukses sinkronisasi {$syncResult['total']} unit dari API Orpeg!");
+        } else {
+            $this->command->warn("   -> API Orpeg tidak dapat dijangkau, menggunakan fallback OPD default.");
+            $defaultOrganizations = [
+                ['name' => 'Dinas Pemberdayaan Perempuan dan Perlindungan Anak (DP3A) Kab. Konawe', 'type' => 'dinas', 'code' => 'D0024'],
+                ['name' => 'Dinas Kesehatan Kab. Konawe', 'type' => 'dinas', 'code' => 'D0004'],
+                ['name' => 'Dinas Pendidikan dan Kebudayaan Kab. Konawe', 'type' => 'dinas', 'code' => 'D0005'],
+                ['name' => 'Dinas Kependudukan dan Pencatatan Sipil Kab. Konawe', 'type' => 'dinas', 'code' => 'D0006'],
+                ['name' => 'Dinas Sosial Kab. Konawe', 'type' => 'dinas', 'code' => 'D0025'],
+                ['name' => 'Dinas Komunikasi dan Informatika Kab. Konawe', 'type' => 'dinas', 'code' => 'D0018'],
+            ];
+            foreach ($defaultOrganizations as $org) {
+                DB::table('organizations')->updateOrInsert(
+                    ['code' => $org['code']],
+                    array_merge($org, ['is_active' => true, 'created_at' => now(), 'updated_at' => now()])
+                );
+            }
+        }
+
+        // Pastikan wadah Forum Anak Daerah (FAD) Konawe terdaftar
+        DB::table('organizations')->updateOrInsert(
+            ['code' => 'ORG-FAD-KNW'],
             [
                 'name' => 'Forum Anak Daerah (FAD) Kabupaten Konawe',
                 'type' => 'lsm',
@@ -90,13 +59,14 @@ class DummyDataSeeder extends Seeder
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
-        ];
+            ]
+        );
 
-        $orgIds = [];
-        foreach ($organizations as $org) {
-            $orgIds[] = DB::table('organizations')->insertGetId($org);
-        }
+        $dp3aId     = DB::table('organizations')->where('code', 'D0024')->value('id') ?? 1;
+        $dinkesId   = DB::table('organizations')->where('code', 'D0004')->value('id') ?? $dp3aId;
+        $dikbudId   = DB::table('organizations')->where('code', 'D0005')->value('id') ?? $dp3aId;
+        $dukcapilId = DB::table('organizations')->where('code', 'D0006')->value('id') ?? $dp3aId;
+        $fadId      = DB::table('organizations')->where('code', 'ORG-FAD-KNW')->value('id') ?? $dp3aId;
 
         // ---------------------------------------------------------------------
         // 2. User Tambahan & Operator Pengujian
@@ -110,21 +80,21 @@ class DummyDataSeeder extends Seeder
                 'name' => 'Siti Rahmawati, S.Sos',
                 'username' => 'petugas_dp3a',
                 'email' => 'rahma@dp3a.konawe.go.id',
-                'organization_id' => $orgIds[0],
+                'organization_id' => $dp3aId,
                 'role' => 'complaint_officer',
             ],
             [
                 'name' => 'dr. Ahmad Fauzi',
                 'username' => 'petugas_faskes',
                 'email' => 'fauzi@dinkes.konawe.go.id',
-                'organization_id' => $orgIds[1],
+                'organization_id' => $dinkesId,
                 'role' => 'facility_manager',
             ],
             [
                 'name' => 'Budi Santoso, M.Pd',
                 'username' => 'editor_pendidikan',
                 'email' => 'budi@dikbud.konawe.go.id',
-                'organization_id' => $orgIds[2],
+                'organization_id' => $dikbudId,
                 'role' => 'content_editor',
             ],
         ];
@@ -321,7 +291,7 @@ class DummyDataSeeder extends Seeder
 
         $services = [
             [
-                'organization_id' => $orgIds[0],
+                'organization_id' => $dp3aId,
                 'name' => 'Layanan Pengaduan & Pendampingan UPTD PPA',
                 'slug' => 'layanan-pengaduan-pendampingan-uptd-ppa',
                 'description' => 'Layanan respons cepat, penjangkauan, pendampingan hukum, dan konseling psikologis gratis bagi anak dan perempuan korban kekerasan.',
@@ -332,7 +302,7 @@ class DummyDataSeeder extends Seeder
                 'image' => 'https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=800&auto=format&fit=crop&q=80',
             ],
             [
-                'organization_id' => $orgIds[0],
+                'organization_id' => $dp3aId,
                 'name' => 'PUSPAGA (Pusat Pembelajaran Keluarga) Kencana Konawe',
                 'slug' => 'puspaga-kencana-konawe',
                 'description' => 'Konsultasi pengasuhan anak (parenting), konseling pranikah, dan bimbingan psikologi anak oleh psikolog profesional.',
@@ -343,7 +313,7 @@ class DummyDataSeeder extends Seeder
                 'image' => 'https://images.unsplash.com/photo-1536640712-4d4c36ff0e4e?w=800&auto=format&fit=crop&q=80',
             ],
             [
-                'organization_id' => $orgIds[3],
+                'organization_id' => $dukcapilId,
                 'name' => 'Layanan Penerbitan KIA (Kartu Identitas Anak) Online & Sekolah',
                 'slug' => 'penerbitan-kia-online-dan-sekolah',
                 'description' => 'Penerbitan identitas kependudukan resmi anak usia 0-17 tahun kurang satu hari secara cepat dan terintegrasi.',
@@ -354,7 +324,7 @@ class DummyDataSeeder extends Seeder
                 'image' => 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=80',
             ],
             [
-                'organization_id' => $orgIds[1],
+                'organization_id' => $dinkesId,
                 'name' => 'Pelayanan Kesehatan Peduli Remaja (PKPR)',
                 'slug' => 'pelayanan-kesehatan-peduli-remaja-pkpr',
                 'description' => 'Konseling kesehatan reproduksi, gizi, pencegahan anemia remaja putri, dan kesehatan mental remaja di puskesmas se-Konawe.',
@@ -381,7 +351,7 @@ class DummyDataSeeder extends Seeder
 
         $facilities = [
             [
-                'organization_id' => $orgIds[0],
+                'organization_id' => $dp3aId,
                 'name' => 'Ruang Bermain Ramah Anak (RBRA) Kantor Bupati Konawe',
                 'slug' => 'rbra-kantor-bupati-konawe',
                 'description' => 'Fasilitas taman bermain luar ruang bersertifikasi nasional dengan lantai peredam benturan dan mainan edukatif.',
@@ -395,7 +365,7 @@ class DummyDataSeeder extends Seeder
                 'image' => 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&auto=format&fit=crop&q=80',
             ],
             [
-                'organization_id' => $orgIds[1],
+                'organization_id' => $dinkesId,
                 'name' => 'Puskesmas Ramah Anak Unaaha',
                 'slug' => 'puskesmas-ramah-anak-unaaha',
                 'description' => 'Fasilitas pelayanan kesehatan dengan ruang tunggu bermain, pojok ASI/laktasi ber-AC, dan toilet anak khusus.',
@@ -409,7 +379,7 @@ class DummyDataSeeder extends Seeder
                 'image' => 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80',
             ],
             [
-                'organization_id' => $orgIds[2],
+                'organization_id' => $dikbudId,
                 'name' => 'Pojok Baca & Perpustakaan Ramah Anak Dispusipda Konawe',
                 'slug' => 'pojok-baca-ramah-anak-dispusipda',
                 'description' => 'Koleksi buku dongeng, ensiklopedia anak, ruang multimedia, dan sesi mendongeng mingguan.',
@@ -423,7 +393,7 @@ class DummyDataSeeder extends Seeder
                 'image' => 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=800&auto=format&fit=crop&q=80',
             ],
             [
-                'organization_id' => $orgIds[0],
+                'organization_id' => $dp3aId,
                 'name' => 'Taman Lalu Lintas Ramah Anak Unaaha',
                 'slug' => 'taman-lalu-lintas-ramah-anak-unaaha',
                 'description' => 'Wahana edukasi rambu lalu lintas, keselamatan berkendara anak, dan ruang hijau rekreasi keluarga.',
