@@ -37,8 +37,8 @@ cp .env.docker.example .env
 
 Sesuaikan nilai penting pada file `.env`:
 - `APP_KEY`: Pastikan telah terisi (atau generate baru).
-- `APP_URL`: URL domain atau IP server (misal: `http://kla.konawekab.go.id` atau `http://192.168.1.100:8080`).
-- `APP_PORT`: Port host yang ingin digunakan (default: `8080`).
+- `APP_URL`: URL domain atau IP server (misal: `http://kla.konawekab.go.id` atau `http://192.168.1.100:8085`).
+- `APP_PORT`: Port host yang ingin digunakan (default: `8085`).
 - `DB_PASSWORD` & `DB_ROOT_PASSWORD`: Ubah dengan password yang kuat dan aman.
 - `BERITA_BASE_URL` & `BERITA_API_KEY`: API token portal berita Konawe.
 
@@ -153,7 +153,7 @@ server {
     client_max_body_size 64M;
 
     location / {
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://127.0.0.1:8085;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
