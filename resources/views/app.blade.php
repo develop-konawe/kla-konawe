@@ -7,6 +7,8 @@
 
         <title inertia>{{ config('app.name', 'Portal KLA Konawe') }}</title>
 
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
         <!-- Meta Description -->
         <meta name="description" content="Portal resmi Kabupaten Layak Anak (KLA) Kabupaten Konawe — melindungi hak anak dan mewujudkan lingkungan ramah anak.">
 
