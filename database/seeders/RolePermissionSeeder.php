@@ -90,16 +90,51 @@ class RolePermissionSeeder extends Seeder
         $roleLeader = Role::findOrCreate('leader');
         $roleLeader->syncPermissions(['statistics.view', 'statistics.manage', 'statistics.publish']);
 
-        // Create or update default Super Admin user
-        $admin = User::updateOrCreate(
-            ['email' => 'admin@portalkla.local'],
+        // Create default test users for key roles
+        $testUsers = [
             [
-                'name' => 'Super Admin',
+                'name' => 'Super Administrator',
                 'username' => 'admin',
-                'password' => Hash::make('password'),
-                'is_active' => true,
-            ]
-        );
-        $admin->syncRoles(['super_admin']);
+                'email' => 'admin@portalkla.local',
+                'role' => 'super_admin',
+            ],
+            [
+                'name' => 'Admin Portal KLA',
+                'username' => 'admin_portal',
+                'email' => 'portal@portalkla.local',
+                'role' => 'admin_portal',
+            ],
+            [
+                'name' => 'Content Editor',
+                'username' => 'editor',
+                'email' => 'editor@portalkla.local',
+                'role' => 'content_editor',
+            ],
+            [
+                'name' => 'Petugas Pengaduan KLA',
+                'username' => 'petugas',
+                'email' => 'petugas@portalkla.local',
+                'role' => 'complaint_officer',
+            ],
+            [
+                'name' => 'Pengelola Layanan & Fasilitas',
+                'username' => 'layanan',
+                'email' => 'layanan@portalkla.local',
+                'role' => 'service_manager',
+            ],
+        ];
+
+        foreach ($testUsers as $u) {
+            $user = User::updateOrCreate(
+                ['email' => $u['email']],
+                [
+                    'name' => $u['name'],
+                    'username' => $u['username'],
+                    'password' => Hash::make('password'),
+                    'is_active' => true,
+                ]
+            );
+            $user->syncRoles([$u['role']]);
+        }
     }
 }
