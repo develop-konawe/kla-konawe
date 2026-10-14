@@ -71,10 +71,27 @@ class OrpegServiceTest extends TestCase
         ]);
 
         $service = new OrpegService();
-        $result = $service->getUnits();
+        $result = $service->getUnits(useFallbackOnFailure: false);
 
         $this->assertFalse($result['success']);
         $this->assertEmpty($result['data']);
+    }
+
+    public function test_it_falls_back_to_konawe_master_snapshot_on_api_timeout(): void
+    {
+        Http::fake([
+            'https://orpeg.konawekab.go.id/api/v1/units' => function () {
+                throw new \Illuminate\Http\Client\ConnectionException('Connection timed out');
+            },
+        ]);
+
+        $service = new OrpegService();
+        $result = $service->getUnits(useFallbackOnFailure: true);
+
+        $this->assertTrue($result['success']);
+        $this->assertTrue($result['from_fallback']);
+        $this->assertCount(63, $result['data']);
+        $this->assertEquals('D0001', $result['data'][0]['id_unit']);
     }
 
     public function test_it_fetches_jabatan_successfully(): void

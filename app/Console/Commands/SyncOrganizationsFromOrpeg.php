@@ -61,9 +61,9 @@ class SyncOrganizationsFromOrpeg extends Command
             return Command::SUCCESS;
         }
 
-        // Ambil data unit dari API
+        // Ambil data unit dari API (dengan fallback otomatis jika timeout)
         $this->info('Mengambil data unit organisasi dari API Orpeg...');
-        $res = $orpegService->getUnits();
+        $res = $orpegService->getUnits(useFallbackOnFailure: true);
 
         if (! $res['success']) {
             $this->error('Gagal: ' . $res['message']);
@@ -71,7 +71,12 @@ class SyncOrganizationsFromOrpeg extends Command
         }
 
         $units = $res['data'];
-        $this->info("Berhasil mengambil " . count($units) . " unit organisasi dari API.");
+        if (! empty($res['from_fallback'])) {
+            $this->warn('ℹ️  Koneksi langsung ke server API Orpeg mengalami timeout / dibatasi firewall.');
+            $this->line("   -> Otomatis menggunakan master snapshot resmi " . count($units) . " OPD Pemkab Konawe.");
+        } else {
+            $this->info("Berhasil mengambil " . count($units) . " unit organisasi langsung dari API Orpeg.");
+        }
 
         if ($this->option('dry-run')) {
             $this->warn('Mode Dry-Run aktif: Data tidak disimpan ke database.');
@@ -98,9 +103,10 @@ class SyncOrganizationsFromOrpeg extends Command
             $this->table(
                 ['Keterangan', 'Jumlah'],
                 [
-                    ['Total Unit dari API', $syncResult['total']],
+                    ['Total Unit Diproses', $syncResult['total']],
                     ['Unit Baru Ditambahkan', $syncResult['created']],
                     ['Unit Diperbarui', $syncResult['updated']],
+                    ['Sumber Data', ! empty($syncResult['from_fallback']) ? 'Snapshot Master Konawe (Fallback Timeout)' : 'Live API Orpeg'],
                 ]
             );
             return Command::SUCCESS;
