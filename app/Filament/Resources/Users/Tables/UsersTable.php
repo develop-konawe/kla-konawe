@@ -31,8 +31,9 @@ class UsersTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('organization_id')
-                    ->numeric()
+                TextColumn::make('organization.name')
+                    ->label('Organisasi / OPD')
+                    ->searchable()
                     ->sortable(),
                 IconColumn::make('is_active')
                     ->boolean(),

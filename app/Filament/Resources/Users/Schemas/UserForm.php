@@ -20,11 +20,11 @@ class UserForm
                     ->email()
                     ->required(),
                 DateTimePicker::make('email_verified_at'),
-                TextInput::make('password')
-                    ->password()
-                    ->required(),
-                TextInput::make('organization_id')
-                    ->numeric(),
+                \Filament\Forms\Components\Select::make('organization_id')
+                    ->label('Organisasi / OPD')
+                    ->relationship('organization', 'name')
+                    ->searchable()
+                    ->preload(),
                 Toggle::make('is_active')
                     ->required(),
                 DateTimePicker::make('last_login_at'),
