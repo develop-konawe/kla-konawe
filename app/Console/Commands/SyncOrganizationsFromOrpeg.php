@@ -110,3 +110,4 @@ class SyncOrganizationsFromOrpeg extends Command
         return Command::FAILURE;
     }
 }
+

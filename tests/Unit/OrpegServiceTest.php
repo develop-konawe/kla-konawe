@@ -115,3 +115,4 @@ class OrpegServiceTest extends TestCase
         $this->assertEquals('opd', $service->determineOrganizationType('Pusat Layanan Terpadu'));
     }
 }
+
