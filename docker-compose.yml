@@ -11,13 +11,13 @@ services:
     container_name: portal_kla_app
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-8080}:80"
+      - "${APP_PORT:-8082}:80"
     environment:
       APP_NAME: "${APP_NAME:-Portal KLA Konawe}"
       APP_ENV: "${APP_ENV:-production}"
       APP_KEY: "${APP_KEY}"
       APP_DEBUG: "${APP_DEBUG:-false}"
-      APP_URL: "${APP_URL:-http://localhost:8080}"
+      APP_URL: "${APP_URL:-http://localhost:8082}"
       APP_LOCALE: "${APP_LOCALE:-id}"
       APP_FALLBACK_LOCALE: "${APP_FALLBACK_LOCALE:-id}"
 
