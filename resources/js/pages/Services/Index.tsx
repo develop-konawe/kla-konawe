@@ -10,6 +10,10 @@ interface ServiceIndexProps {
 }
 
 function ServiceCard({ service, index }: { service: Service; index: number }) {
+    const imageUrl = service.image?.startsWith('http://') || service.image?.startsWith('https://')
+        ? service.image
+        : service.image ? `/storage/${service.image}` : null;
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -22,10 +26,10 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
                 className="group bg-white rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col h-full overflow-hidden block"
             >
                 <div className="p-8 flex-grow">
-                    {service.image ? (
+                    {imageUrl ? (
                         <div className="h-48 -mx-8 -mt-8 mb-6 overflow-hidden bg-gray-50 flex items-center justify-center">
                             <img
-                                src={`/storage/${service.image}`}
+                                src={imageUrl}
                                 alt={service.name}
                                 className="w-full h-full object-contain group-hover:scale-105 transition duration-500"
                             />

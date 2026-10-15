@@ -62,28 +62,48 @@ export interface Post {
     updated_at: string;
 }
 
+export interface Organization {
+    id: number;
+    name: string;
+    code?: string | null;
+    type?: string | null;
+    address?: string | null;
+    phone?: string | null;
+    email?: string | null;
+    is_active?: boolean;
+}
+
 export interface Service {
     id: number;
+    organization_id?: number | null;
+    organization?: Organization | null;
     name: string;
     slug: string;
     description: string | null;
+    type?: 'terpadu' | 'online' | 'offline' | string | null;
     image: string | null;
     contact_info: string | null;
-    status: 'draft' | 'published';
+    working_hours?: string | null;
+    status: 'draft' | 'published' | string;
     created_at: string;
     updated_at: string;
 }
 
 export interface Facility {
     id: number;
+    organization_id?: number | null;
+    organization?: Organization | null;
     name: string;
     slug: string;
     description: string | null;
     address: string | null;
+    coordinates?: string | null;
     image: string | null;
     is_child_friendly: boolean;
-    phone: string | null;
+    phone?: string | null;
     category: string | null;
+    status?: 'draft' | 'published' | string;
+    verified_at?: string | null;
     created_at: string;
     updated_at: string;
 }

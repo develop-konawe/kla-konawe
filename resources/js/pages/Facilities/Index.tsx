@@ -10,6 +10,10 @@ interface FacilityIndexProps {
 }
 
 function FacilityCard({ facility, index }: { facility: Facility; index: number }) {
+    const imageUrl = facility.image?.startsWith('http://') || facility.image?.startsWith('https://')
+        ? facility.image
+        : facility.image ? `/storage/${facility.image}` : null;
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -21,10 +25,10 @@ function FacilityCard({ facility, index }: { facility: Facility; index: number }
                 href={`/fasilitas/${facility.slug}`}
                 className="group bg-white rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col h-full overflow-hidden block"
             >
-                {facility.image ? (
+                {imageUrl ? (
                     <div className="h-48 overflow-hidden">
                         <img
-                            src={`/storage/${facility.image}`}
+                            src={imageUrl}
                             alt={facility.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
