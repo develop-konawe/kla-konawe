@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Facility;
 use App\Models\Page;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,6 +15,26 @@ class PageController extends Controller
         $page = Page::where('slug', $slug)
                     ->where('status', 'published')
                     ->first();
+
+        if ($slug === 'tentang-kla') {
+            $stats = [
+                'facilities_count' => Facility::count(),
+                'services_count'   => Service::where('status', 'published')->count(),
+                'clusters_count'   => 5,
+                'districts_count'  => 28,
+            ];
+
+            return Inertia::render('About', [
+                'page' => $page ? [
+                    'id'      => $page->id,
+                    'title'   => $page->title,
+                    'slug'    => $page->slug,
+                    'excerpt' => $page->excerpt,
+                    'content' => $page->content,
+                ] : null,
+                'stats' => $stats,
+            ]);
+        }
 
         if (!$page) {
             $page = new Page([
