@@ -15,20 +15,22 @@ class PostController extends Controller
         $perPage = 9;
         $search = $request->input('search');
 
-        // Fetch from Berita API as LengthAwarePaginator
-        $posts = $beritaService->getPaginatedBerita($page, $perPage, $search);
-
-        // Fallback to local posts if API is unavailable
-        if (! $posts) {
-            $query = Post::where('status', 'published');
-            if ($search) {
-                $query->where('title', 'like', "%{$search}%");
-            }
-            $posts = $query->orderBy('published_at', 'desc')->paginate($perPage);
-        }
-
         return Inertia::render('Posts/Index', [
-            'posts'   => $posts,
+            'posts'   => Inertia::defer(function () use ($beritaService, $page, $perPage, $search) {
+                // Fetch from Berita API as LengthAwarePaginator
+                $posts = $beritaService->getPaginatedBerita($page, $perPage, $search);
+
+                // Fallback to local posts if API is unavailable
+                if (! $posts) {
+                    $query = Post::where('status', 'published');
+                    if ($search) {
+                        $query->where('title', 'like', "%{$search}%");
+                    }
+                    $posts = $query->orderBy('published_at', 'desc')->paginate($perPage);
+                }
+
+                return $posts;
+            }),
             'filters' => [
                 'search' => $search,
             ],
