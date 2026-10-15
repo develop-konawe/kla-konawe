@@ -100,12 +100,7 @@ export default function ServicesIndex({ services, search = '' }: ServiceIndexPro
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 6, repeat: Infinity, delay: 1 }}
                 />
-                <motion.div
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="relative z-10"
-                >
+                <div className="relative z-10">
                     <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">Direktori Layanan</h1>
                     <p className="text-xl text-primary-100 max-w-2xl mx-auto font-medium mb-8">
                         Temukan berbagai layanan publik yang ramah anak di Kabupaten Konawe.
@@ -135,12 +130,23 @@ export default function ServicesIndex({ services, search = '' }: ServiceIndexPro
                             <span>Cari</span>
                         </div>
                     </div>
-                </motion.div>
+                </div>
             </div>
 
             {/* Grid */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                {services.data.length > 0 ? (
+                {isSearching ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[1, 2, 3, 4, 5, 6].map((n) => (
+                            <div key={n} className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm animate-pulse space-y-4">
+                                <div className="w-12 h-12 bg-slate-200 rounded-2xl" />
+                                <div className="h-6 bg-slate-200 rounded-lg w-3/4" />
+                                <div className="h-4 bg-slate-100 rounded-lg w-full" />
+                                <div className="h-4 bg-slate-100 rounded-lg w-2/3" />
+                            </div>
+                        ))}
+                    </div>
+                ) : services.data.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {services.data.map((service, i) => (
                             <ServiceCard key={service.id} service={service} index={i} />

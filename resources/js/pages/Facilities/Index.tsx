@@ -98,12 +98,7 @@ export default function FacilitiesIndex({ facilities, search = '' }: FacilityInd
         <AppLayout title="Fasilitas Ramah Anak">
             <div className="bg-gradient-to-r from-green-500 to-primary-600 pt-32 pb-20 text-white text-center relative overflow-hidden">
                 <div className="h-24" />
-                <motion.div
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="relative z-10"
-                >
+                <div className="relative z-10">
                     <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">Fasilitas Ramah Anak</h1>
                     <p className="text-xl text-green-100 max-w-2xl mx-auto font-medium mb-8">
                         Temukan fasilitas yang aman dan nyaman untuk anak-anak di Kabupaten Konawe.
@@ -130,11 +125,23 @@ export default function FacilitiesIndex({ facilities, search = '' }: FacilityInd
                             )}
                         </div>
                     </div>
-                </motion.div>
+                </div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                {facilities.data.length > 0 ? (
+                {isSearching ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[1, 2, 3, 4, 5, 6].map((n) => (
+                            <div key={n} className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm animate-pulse space-y-4">
+                                <div className="h-48 bg-slate-200 rounded-2xl w-full" />
+                                <div className="h-4 bg-slate-200 rounded-full w-1/4" />
+                                <div className="h-6 bg-slate-200 rounded-lg w-3/4" />
+                                <div className="h-4 bg-slate-100 rounded-lg w-full" />
+                                <div className="h-4 bg-slate-100 rounded-lg w-2/3" />
+                            </div>
+                        ))}
+                    </div>
+                ) : facilities.data.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {facilities.data.map((facility, i) => (
                             <FacilityCard key={facility.id} facility={facility} index={i} />

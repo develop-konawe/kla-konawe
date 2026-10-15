@@ -289,12 +289,7 @@ export default function About({ page, stats }: AboutProps) {
                 </div>
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="max-w-4xl mx-auto"
-                    >
+                    <div className="max-w-4xl mx-auto">
                         {/* Badges Ribbon */}
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-primary-100 mb-6 shadow-sm">
                             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -333,15 +328,10 @@ export default function About({ page, stats }: AboutProps) {
                                 Sinergi OPD &amp; Gugus Tugas
                             </button>
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* METRICS COUNTER BAR */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 24 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                        className="mt-14 max-w-5xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 text-left"
-                    >
+                    <div className="mt-14 max-w-5xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 text-left">
                         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 sm:p-5 shadow-lg">
                             <div className="text-2xl sm:text-3xl font-black text-white">5 Klaster</div>
                             <div className="text-xs sm:text-sm text-primary-200 mt-1 font-medium">Pilar Utama Hak Anak KemenPPPA</div>
@@ -361,7 +351,7 @@ export default function About({ page, stats }: AboutProps) {
                             <div className="text-2xl sm:text-3xl font-black text-emerald-300">100% Gratis</div>
                             <div className="text-xs sm:text-sm text-primary-200 mt-1 font-medium">Layanan Publik Ramah Anak</div>
                         </div>
-                    </motion.div>
+                    </div>
                 </div>
             </div>
 

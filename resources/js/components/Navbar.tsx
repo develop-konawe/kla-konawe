@@ -14,10 +14,10 @@ const navLinks = [
 export default function Navbar() {
     const { url } = usePage();
     const [open, setOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
+    const [scrolled, setScrolled] = useState(() => typeof window !== 'undefined' && window.scrollY > 15);
 
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 20);
+        const onScroll = () => setScrolled(window.scrollY > 15);
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
@@ -28,12 +28,12 @@ export default function Navbar() {
     }, [url]);
 
     return (
-        <div className={`fixed w-full top-0 z-50 px-4 sm:px-6 lg:px-8 transition-all duration-300 ${scrolled ? 'pt-2 pb-1' : 'pt-4 pb-2'}`}>
+        <div className="fixed w-full top-0 z-50 px-4 sm:px-6 lg:px-8 pt-3 pb-1.5 transition-all duration-200">
             <nav
-                className={`max-w-7xl mx-auto rounded-2xl lg:rounded-full shadow-lg border border-white/40 transition-all duration-300 ${
+                className={`max-w-7xl mx-auto rounded-2xl lg:rounded-full shadow-lg border border-white/40 transition-all duration-200 ${
                     scrolled
-                        ? 'bg-white/90 backdrop-blur-xl shadow-gray-200/60'
-                        : 'bg-white/70 backdrop-blur-md'
+                        ? 'bg-white/95 backdrop-blur-xl shadow-gray-200/60'
+                        : 'bg-white/85 backdrop-blur-md'
                 }`}
             >
                 <div className="px-5 lg:px-6 h-16 flex items-center justify-between">

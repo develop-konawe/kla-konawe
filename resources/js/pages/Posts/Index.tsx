@@ -111,17 +111,12 @@ export default function PostsIndex({ posts, filters }: PostIndexProps) {
         <AppLayout title="Berita & Artikel">
             <div className="bg-gradient-to-r from-primary-600 to-indigo-700 pt-32 pb-16 text-white text-center relative overflow-hidden">
                 <div className="h-24" />
-                <motion.div
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="relative z-10"
-                >
+                <div className="relative z-10">
                     <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">Berita &amp; Artikel</h1>
                     <p className="text-xl text-indigo-100 max-w-2xl mx-auto font-medium">
                         Kabar terkini seputar program dan kegiatan KLA di Kabupaten Konawe.
                     </p>
-                </motion.div>
+                </div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

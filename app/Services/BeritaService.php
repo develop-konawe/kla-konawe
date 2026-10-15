@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -19,7 +20,7 @@ class BeritaService
     {
         $this->baseUrl = rtrim((string) config('services.berita.base_url', 'https://berita.konawekab.go.id/api/v1'), '/');
         $this->apiKey = config('services.berita.api_key');
-        $this->timeout = (int) config('services.berita.timeout', 10);
+        $this->timeout = (int) config('services.berita.timeout', 2);
     }
 
     /**
@@ -39,77 +40,76 @@ class BeritaService
     }
 
     /**
-     * Fetch news list from the Berita API.
+     * Fetch news list from the Berita API with 10-minute caching.
      *
      * @param array $params Query parameters (page, per_page, search, category, etc.)
      * @return array{success: bool, data: array, meta: array}
      */
     public function getBerita(array $params = []): array
     {
-        $page = (int) ($params['page'] ?? 1);
-        $perPage = (int) ($params['per_page'] ?? 10);
+        $cacheKey = 'berita_api_' . md5(serialize($params));
 
-        $query = array_filter([
-            'api_key'  => $this->apiKey,
-            'page'     => $page,
-            'per_page' => $perPage,
-            'search'   => $params['search'] ?? null,
-            'category' => $params['category'] ?? null,
-        ], static fn ($value) => filled($value));
+        return Cache::remember($cacheKey, 600, function () use ($params) {
+            $page = (int) ($params['page'] ?? 1);
+            $perPage = (int) ($params['per_page'] ?? 10);
 
-        $defaultResult = [
-            'success' => false,
-            'data'    => [],
-            'meta'    => [
-                'total'        => 0,
-                'per_page'     => $perPage,
-                'current_page' => $page,
-                'last_page'    => 1,
-            ],
-        ];
+            $query = array_filter([
+                'api_key'  => $this->apiKey,
+                'page'     => $page,
+                'per_page' => $perPage,
+                'search'   => $params['search'] ?? null,
+                'category' => $params['category'] ?? null,
+            ], static fn ($value) => filled($value));
 
-        try {
-            $response = Http::timeout($this->timeout)
-                ->acceptJson()
-                ->get("{$this->baseUrl}/berita", $query);
-
-            if (! $response->successful()) {
-                Log::warning('Berita API call returned unsuccessful status', [
-                    'status' => $response->status(),
-                    'body'   => $response->body(),
-                ]);
-                return $defaultResult;
-            }
-
-            $json = $response->json();
-            $rawItems = $json['data'] ?? [];
-
-            $formattedItems = collect($rawItems)
-                ->filter(static fn ($item) => is_array($item))
-                ->map(fn (array $item) => $this->formatItem($item))
-                ->values()
-                ->toArray();
-
-            $meta = $json['meta'] ?? [];
-
-            return [
-                'success' => true,
-                'data'    => $formattedItems,
+            $defaultResult = [
+                'success' => false,
+                'data'    => [],
                 'meta'    => [
-                    'total'        => (int) ($meta['total'] ?? count($formattedItems)),
-                    'per_page'     => (int) ($meta['per_page'] ?? $perPage),
-                    'current_page' => (int) ($meta['current_page'] ?? $page),
-                    'last_page'    => (int) ($meta['last_page'] ?? 1),
+                    'total'        => 0,
+                    'per_page'     => $perPage,
+                    'current_page' => $page,
+                    'last_page'    => 1,
                 ],
             ];
-        } catch (Throwable $e) {
-            Log::error('Berita API request failed', [
-                'message' => $e->getMessage(),
-                'trace'   => $e->getTraceAsString(),
-            ]);
 
-            return $defaultResult;
-        }
+            try {
+                $response = Http::timeout($this->timeout)
+                    ->acceptJson()
+                    ->get("{$this->baseUrl}/berita", $query);
+
+                if (! $response->successful()) {
+                    Log::warning('Berita API call returned unsuccessful status', [
+                        'status' => $response->status(),
+                    ]);
+                    return $defaultResult;
+                }
+
+                $json = $response->json();
+                $rawItems = $json['data'] ?? [];
+
+                $formattedItems = collect($rawItems)
+                    ->filter(static fn ($item) => is_array($item))
+                    ->map(fn (array $item) => $this->formatItem($item))
+                    ->values()
+                    ->toArray();
+
+                $meta = $json['meta'] ?? [];
+
+                return [
+                    'success' => true,
+                    'data'    => $formattedItems,
+                    'meta'    => [
+                        'total'        => (int) ($meta['total'] ?? count($formattedItems)),
+                        'per_page'     => (int) ($meta['per_page'] ?? $perPage),
+                        'current_page' => (int) ($meta['current_page'] ?? $page),
+                        'last_page'    => (int) ($meta['last_page'] ?? 1),
+                    ],
+                ];
+            } catch (Throwable $e) {
+                Log::warning('Berita API request failed or timed out: ' . $e->getMessage());
+                return $defaultResult;
+            }
+        });
     }
 
     /**
@@ -187,27 +187,29 @@ class BeritaService
      */
     public function getAgenda(array $params = []): array
     {
-        $query = array_filter([
-            'api_key'  => $this->apiKey,
-            'page'     => $params['page'] ?? 1,
-            'per_page' => $params['per_page'] ?? 10,
-        ], static fn ($value) => filled($value));
+        $cacheKey = 'agenda_api_' . md5(serialize($params));
 
-        try {
-            $response = Http::timeout($this->timeout)
-                ->acceptJson()
-                ->get("{$this->baseUrl}/agenda", $query);
+        return Cache::remember($cacheKey, 600, function () use ($params) {
+            $query = array_filter([
+                'api_key'  => $this->apiKey,
+                'page'     => $params['page'] ?? 1,
+                'per_page' => $params['per_page'] ?? 10,
+            ], static fn ($value) => filled($value));
 
-            if ($response->successful()) {
-                return $response->json('data') ?? [];
+            try {
+                $response = Http::timeout($this->timeout)
+                    ->acceptJson()
+                    ->get("{$this->baseUrl}/agenda", $query);
+
+                if ($response->successful()) {
+                    return $response->json('data') ?? [];
+                }
+            } catch (Throwable $e) {
+                Log::warning('Berita API agenda request failed: ' . $e->getMessage());
             }
-        } catch (Throwable $e) {
-            Log::warning('Berita API agenda request failed', [
-                'message' => $e->getMessage(),
-            ]);
-        }
 
-        return [];
+            return [];
+        });
     }
 
     /**
