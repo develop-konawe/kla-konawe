@@ -44,7 +44,9 @@ export interface Post {
     content: string | null;
     featured_image: string | null;
     url?: string | null;
+    category_id?: number | null;
     category?: {
+        id?: number;
         name: string;
         slug: string;
         icon?: string;
@@ -54,9 +56,15 @@ export interface Post {
         slug: string;
         type?: string;
     } | null;
-    author?: string | null;
+    author?: {
+        id?: number;
+        name: string;
+        username?: string;
+        email?: string;
+        organization?: Organization | null;
+    } | string | null;
     views?: number;
-    status: 'draft' | 'published';
+    status: 'draft' | 'published' | string;
     published_at: string | null;
     created_at: string;
     updated_at: string;

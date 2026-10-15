@@ -38,13 +38,34 @@ class PostController extends Controller
     public function show($slug, BeritaService $beritaService)
     {
         // 1. Check local database
-        $post = Post::where('slug', $slug)
+        $post = Post::with(['category', 'author.organization'])
+                    ->where('slug', $slug)
                     ->where('status', 'published')
                     ->first();
 
         if ($post) {
+            $relatedPosts = Post::with(['category'])
+                ->where('id', '!=', $post->id)
+                ->where('status', 'published')
+                ->when($post->category_id, fn ($q) => $q->where('category_id', $post->category_id))
+                ->orderBy('published_at', 'desc')
+                ->take(3)
+                ->get();
+
+            if ($relatedPosts->count() < 3) {
+                $excludeIds = $relatedPosts->pluck('id')->push($post->id);
+                $morePosts = Post::with(['category'])
+                    ->where('status', 'published')
+                    ->whereNotIn('id', $excludeIds)
+                    ->orderBy('published_at', 'desc')
+                    ->take(3 - $relatedPosts->count())
+                    ->get();
+                $relatedPosts = $relatedPosts->concat($morePosts);
+            }
+
             return Inertia::render('Posts/Show', [
-                'post' => $post,
+                'post'         => $post,
+                'relatedPosts' => $relatedPosts,
             ]);
         }
 
@@ -56,8 +77,15 @@ class PostController extends Controller
                 return redirect()->away($apiItem['url']);
             }
 
+            $relatedPosts = Post::with(['category'])
+                ->where('status', 'published')
+                ->orderBy('published_at', 'desc')
+                ->take(3)
+                ->get();
+
             return Inertia::render('Posts/Show', [
-                'post' => $apiItem,
+                'post'         => $apiItem,
+                'relatedPosts' => $relatedPosts,
             ]);
         }
 

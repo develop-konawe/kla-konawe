@@ -1164,3 +1164,4 @@ export default function About({ page, stats }: AboutProps) {
         </AppLayout>
     );
 }
+

@@ -57,6 +57,7 @@ export default function Navbar() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
+                                    prefetch="hover"
                                     className={`px-4 py-2 rounded-full font-bold transition text-sm ${
                                         isActive
                                             ? 'bg-primary-100 text-primary-700'
@@ -125,6 +126,7 @@ export default function Navbar() {
                                         <Link
                                             key={link.href}
                                             href={link.href}
+                                            prefetch="hover"
                                             className={`block px-4 py-3 rounded-xl font-bold transition ${
                                                 isActive
                                                     ? 'bg-primary-100 text-primary-700'
