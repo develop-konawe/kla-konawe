@@ -20,11 +20,12 @@ class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
-        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
-    protected static ?string $navigationLabel = 'Berita';
-    protected static ?string $modelLabel = 'Berita';
-    protected static ?string $pluralModelLabel = 'Berita';
-    protected static \UnitEnum|string|null $navigationGroup = 'Publikasi';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
+    protected static ?string $navigationLabel = 'Berita & Artikel KLA';
+    protected static ?string $modelLabel = 'Berita & Artikel KLA';
+    protected static ?string $pluralModelLabel = 'Berita & Artikel KLA';
+    protected static \UnitEnum|string|null $navigationGroup = 'Informasi & Edukasi KLA';
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'title';
 

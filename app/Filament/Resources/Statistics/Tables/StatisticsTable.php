@@ -17,34 +17,39 @@ class StatisticsTable
     {
         return $table
             ->columns([
-                TextColumn::make('category_id')
-                    ->searchable(),
                 TextColumn::make('title')
+                    ->label('Indikator KLA')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold')
+                    ->limit(45),
+                TextColumn::make('category_id')
+                    ->label('Klaster')
+                    ->badge()
                     ->searchable(),
                 TextColumn::make('year')
+                    ->label('Tahun')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('region_id')
-                    ->searchable(),
                 TextColumn::make('value')
+                    ->label('Nilai Capaian')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('unit')
-                    ->searchable(),
+                    ->sortable()
+                    ->formatStateUsing(fn ($record) => "{$record->value} " . ($record->unit ?? '')),
                 TextColumn::make('source')
-                    ->searchable(),
+                    ->label('Sumber / OPD')
+                    ->searchable()
+                    ->toggleable(),
+                TextColumn::make('region_id')
+                    ->label('Wilayah')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
+                    ->label('Status')
                     ->badge()
                     ->searchable(),
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('deleted_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

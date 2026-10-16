@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Publications\Tables;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -14,35 +15,45 @@ class PublicationsTable
     {
         return $table
             ->columns([
-                TextColumn::make('category.name')
-                    ->searchable(),
                 TextColumn::make('title')
+                    ->label('Judul Dokumen')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold')
+                    ->limit(50),
+                TextColumn::make('category.name')
+                    ->label('Kategori')
+                    ->badge()
                     ->searchable(),
-                TextColumn::make('year'),
-                TextColumn::make('file_path')
-                    ->searchable(),
+                TextColumn::make('year')
+                    ->label('Tahun')
+                    ->sortable(),
                 TextColumn::make('classification')
+                    ->label('Akses')
                     ->badge()
                     ->searchable(),
                 TextColumn::make('status')
+                    ->label('Status')
                     ->badge()
                     ->searchable(),
                 TextColumn::make('published_at')
-                    ->dateTime()
+                    ->label('Tayang')
+                    ->dateTime('d M Y')
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
             ])
             ->recordActions([
+                Action::make('view_public')
+                    ->label('Lihat di Web')
+                    ->icon('heroicon-m-arrow-top-right-on-square')
+                    ->color('info')
+                    ->tooltip('Buka halaman direktori publikasi di portal publik')
+                    ->url(fn () => url('/publikasi'))
+                    ->openUrlInNewTab(),
                 EditAction::make(),
             ])
             ->toolbarActions([

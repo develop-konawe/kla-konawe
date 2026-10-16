@@ -20,11 +20,12 @@ class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
 
-        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
-    protected static ?string $navigationLabel = 'Halaman';
-    protected static ?string $modelLabel = 'Halaman';
-    protected static ?string $pluralModelLabel = 'Halaman';
-    protected static \UnitEnum|string|null $navigationGroup = 'Konten Utama';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+    protected static ?string $navigationLabel = 'Halaman & Profil KLA';
+    protected static ?string $modelLabel = 'Halaman Web';
+    protected static ?string $pluralModelLabel = 'Halaman Web';
+    protected static \UnitEnum|string|null $navigationGroup = 'Informasi & Edukasi KLA';
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'title';
 

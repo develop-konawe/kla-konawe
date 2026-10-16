@@ -20,11 +20,12 @@ class StatisticResource extends Resource
 {
     protected static ?string $model = Statistic::class;
 
-        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
-    protected static ?string $navigationLabel = 'Statistik';
-    protected static ?string $modelLabel = 'Statistik';
-    protected static ?string $pluralModelLabel = 'Statistik';
-    protected static \UnitEnum|string|null $navigationGroup = 'Pengaturan';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
+    protected static ?string $navigationLabel = 'Data & Indikator KLA';
+    protected static ?string $modelLabel = 'Indikator & Statistik KLA';
+    protected static ?string $pluralModelLabel = 'Indikator & Statistik KLA';
+    protected static \UnitEnum|string|null $navigationGroup = 'Gugus Tugas & Data KLA';
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'title';
 

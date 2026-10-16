@@ -18,11 +18,22 @@ class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
 
-        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
-    protected static ?string $navigationLabel = 'Layanan Publik';
-    protected static ?string $modelLabel = 'Layanan Publik';
-    protected static ?string $pluralModelLabel = 'Layanan Publik';
-    protected static \UnitEnum|string|null $navigationGroup = 'Layanan & Fasilitas';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
+    protected static ?string $navigationLabel = 'Layanan Ramah Anak';
+    protected static ?string $modelLabel = 'Layanan Ramah Anak';
+    protected static ?string $pluralModelLabel = 'Layanan Ramah Anak';
+    protected static \UnitEnum|string|null $navigationGroup = 'Layanan & Fasilitas Anak';
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::where('status', 'published')->count();
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Jumlah layanan ramah anak yang aktif dipublikasikan di website';
+    }
 
     protected static ?string $recordTitleAttribute = 'name';
 

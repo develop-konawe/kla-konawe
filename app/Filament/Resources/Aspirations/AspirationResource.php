@@ -18,11 +18,28 @@ class AspirationResource extends Resource
 {
     protected static ?string $model = Aspiration::class;
 
-        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleBottomCenterText;
-    protected static ?string $navigationLabel = 'Aspirasi';
-    protected static ?string $modelLabel = 'Aspirasi';
-    protected static ?string $pluralModelLabel = 'Aspirasi';
-    protected static \UnitEnum|string|null $navigationGroup = 'Interaksi Warga';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleBottomCenterText;
+    protected static ?string $navigationLabel = 'Aspirasi Suara Anak';
+    protected static ?string $modelLabel = 'Aspirasi Suara Anak';
+    protected static ?string $pluralModelLabel = 'Aspirasi Suara Anak';
+    protected static \UnitEnum|string|null $navigationGroup = 'Partisipasi Anak & Warga';
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::where('status', 'draft')->orWhere('status', 'pending')->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Jumlah aspirasi baru yang menunggu ditinjau';
+    }
 
     protected static ?string $recordTitleAttribute = 'title';
 

@@ -18,11 +18,12 @@ class OrganizationResource extends Resource
 {
     protected static ?string $model = Organization::class;
 
-        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
-    protected static ?string $navigationLabel = 'Organisasi / OPD';
-    protected static ?string $modelLabel = 'Organisasi / OPD';
-    protected static ?string $pluralModelLabel = 'Organisasi / OPD';
-    protected static \UnitEnum|string|null $navigationGroup = 'Pengaturan';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
+    protected static ?string $navigationLabel = 'Gugus Tugas / OPD KLA';
+    protected static ?string $modelLabel = 'Gugus Tugas / OPD Mitra KLA';
+    protected static ?string $pluralModelLabel = 'Gugus Tugas / OPD Mitra KLA';
+    protected static \UnitEnum|string|null $navigationGroup = 'Gugus Tugas & Data KLA';
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'name';
 

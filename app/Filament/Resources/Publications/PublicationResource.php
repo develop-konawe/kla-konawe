@@ -18,11 +18,12 @@ class PublicationResource extends Resource
 {
     protected static ?string $model = Publication::class;
 
-        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
-    protected static ?string $navigationLabel = 'Publikasi & Laporan';
-    protected static ?string $modelLabel = 'Publikasi & Laporan';
-    protected static ?string $pluralModelLabel = 'Publikasi & Laporan';
-    protected static \UnitEnum|string|null $navigationGroup = 'Publikasi';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+    protected static ?string $navigationLabel = 'Publikasi & Regulasi';
+    protected static ?string $modelLabel = 'Publikasi & Regulasi';
+    protected static ?string $pluralModelLabel = 'Publikasi & Regulasi';
+    protected static \UnitEnum|string|null $navigationGroup = 'Informasi & Edukasi KLA';
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'title';
 

@@ -18,11 +18,22 @@ class FacilityResource extends Resource
 {
     protected static ?string $model = Facility::class;
 
-        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
     protected static ?string $navigationLabel = 'Fasilitas Ramah Anak';
     protected static ?string $modelLabel = 'Fasilitas Ramah Anak';
     protected static ?string $pluralModelLabel = 'Fasilitas Ramah Anak';
-    protected static \UnitEnum|string|null $navigationGroup = 'Layanan & Fasilitas';
+    protected static \UnitEnum|string|null $navigationGroup = 'Layanan & Fasilitas Anak';
+    protected static ?int $navigationSort = 2;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::where('is_child_friendly', true)->count();
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Jumlah fasilitas ramah anak terverifikasi di website publik';
+    }
 
     protected static ?string $recordTitleAttribute = 'name';
 

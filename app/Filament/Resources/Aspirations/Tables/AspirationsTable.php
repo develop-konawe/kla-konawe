@@ -15,39 +15,49 @@ class AspirationsTable
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->searchable(),
-                TextColumn::make('author_name')
-                    ->searchable(),
-                TextColumn::make('author_age')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('author_region')
-                    ->searchable(),
-                TextColumn::make('status')
+                    ->label('Judul Aspirasi')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold')
+                    ->limit(45),
+                TextColumn::make('category')
+                    ->label('Klaster / Kategori')
                     ->badge()
                     ->searchable(),
-                TextColumn::make('category')
+                TextColumn::make('author_name')
+                    ->label('Pengirim')
                     ->searchable(),
-                TextColumn::make('reviewed_by')
-                    ->numeric()
+                TextColumn::make('author_age')
+                    ->label('Usia')
+                    ->formatStateUsing(fn ($state) => $state ? "{$state} th" : '-')
                     ->sortable(),
+                TextColumn::make('author_region')
+                    ->label('Kecamatan')
+                    ->searchable(),
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->searchable(),
+                TextColumn::make('reviewer.name')
+                    ->label('Ditinjau Oleh')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('reviewed_at')
-                    ->dateTime()
-                    ->sortable(),
+                    ->label('Waktu Review')
+                    ->dateTime('d M Y')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Masuk Pada')
+                    ->dateTime('d M Y, H:i')
+                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->label('Tinjau / Moderasi'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

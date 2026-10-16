@@ -29,11 +29,24 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(\App\Filament\Pages\Auth\Login::class)
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Emerald,
             ])
             ->brandName('Portal KLA Konawe')
             ->brandLogo(asset('images/logo_konawe.png'))
             ->brandLogoHeight('3rem')
+            ->navigationGroups([
+                \Filament\Navigation\NavigationGroup::make('Layanan & Fasilitas Anak')
+                    ->icon('heroicon-o-heart'),
+                \Filament\Navigation\NavigationGroup::make('Informasi & Edukasi KLA')
+                    ->icon('heroicon-o-newspaper'),
+                \Filament\Navigation\NavigationGroup::make('Partisipasi Anak & Warga')
+                    ->icon('heroicon-o-chat-bubble-left-right'),
+                \Filament\Navigation\NavigationGroup::make('Gugus Tugas & Data KLA')
+                    ->icon('heroicon-o-building-office-2'),
+                \Filament\Navigation\NavigationGroup::make('Pengaturan Sistem')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->collapsed(),
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
@@ -41,8 +54,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                \App\Filament\Widgets\KlaStatsOverviewWidget::class,
+                \App\Filament\Widgets\KlaPublicWebsiteGuideWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

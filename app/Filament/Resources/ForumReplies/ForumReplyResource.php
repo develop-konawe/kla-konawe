@@ -20,11 +20,13 @@ class ForumReplyResource extends Resource
 {
     protected static ?string $model = ForumReply::class;
 
-        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUturnLeft;
-    protected static ?string $navigationLabel = 'Balasan Forum';
-    protected static ?string $modelLabel = 'Balasan Forum';
-    protected static ?string $pluralModelLabel = 'Balasan Forum';
-    protected static \UnitEnum|string|null $navigationGroup = 'Interaksi Warga';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUturnLeft;
+    protected static ?string $navigationLabel = 'Balasan Diskusi';
+    protected static ?string $modelLabel = 'Balasan Diskusi Forum';
+    protected static ?string $pluralModelLabel = 'Balasan Diskusi Forum';
+    protected static \UnitEnum|string|null $navigationGroup = 'Partisipasi Anak & Warga';
+    protected static ?string $navigationParentItem = 'Forum Anak (Diskusi)';
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'id';
 

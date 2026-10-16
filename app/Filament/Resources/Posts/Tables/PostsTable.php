@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Posts\Tables;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -18,30 +19,33 @@ class PostsTable
     {
         return $table
             ->columns([
-                TextColumn::make('category.name')
-                    ->searchable(),
+                ImageColumn::make('featured_image')
+                    ->label('Sampul')
+                    ->square(),
                 TextColumn::make('title')
+                    ->label('Judul Berita')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold')
+                    ->limit(50),
+                TextColumn::make('category.name')
+                    ->label('Kategori')
+                    ->badge()
                     ->searchable(),
-                TextColumn::make('slug')
-                    ->searchable(),
-                ImageColumn::make('featured_image'),
                 TextColumn::make('status')
+                    ->label('Status')
                     ->badge()
                     ->searchable(),
                 TextColumn::make('published_at')
-                    ->dateTime()
+                    ->label('Tayang')
+                    ->dateTime('d M Y, H:i')
                     ->sortable(),
                 TextColumn::make('author.name')
-                    ->searchable(),
+                    ->label('Penulis')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('deleted_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -50,6 +54,13 @@ class PostsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                Action::make('view_public')
+                    ->label('Lihat di Web')
+                    ->icon('heroicon-m-arrow-top-right-on-square')
+                    ->color('info')
+                    ->tooltip('Buka artikel ini di website publik')
+                    ->url(fn ($record) => url("/berita/{$record->slug}"))
+                    ->openUrlInNewTab(),
                 EditAction::make(),
             ])
             ->toolbarActions([

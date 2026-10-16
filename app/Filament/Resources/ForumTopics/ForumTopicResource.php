@@ -20,11 +20,12 @@ class ForumTopicResource extends Resource
 {
     protected static ?string $model = ForumTopic::class;
 
-        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
-    protected static ?string $navigationLabel = 'Topik Forum';
-    protected static ?string $modelLabel = 'Topik Forum';
-    protected static ?string $pluralModelLabel = 'Topik Forum';
-    protected static \UnitEnum|string|null $navigationGroup = 'Interaksi Warga';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeftRight;
+    protected static ?string $navigationLabel = 'Forum Anak (Diskusi)';
+    protected static ?string $modelLabel = 'Topik Diskusi Forum Anak';
+    protected static ?string $pluralModelLabel = 'Topik Diskusi Forum Anak';
+    protected static \UnitEnum|string|null $navigationGroup = 'Partisipasi Anak & Warga';
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'title';
 

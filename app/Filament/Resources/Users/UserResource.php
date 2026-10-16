@@ -18,11 +18,12 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-        protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
-    protected static ?string $navigationLabel = 'Pengguna';
-    protected static ?string $modelLabel = 'Pengguna';
-    protected static ?string $pluralModelLabel = 'Pengguna';
-    protected static \UnitEnum|string|null $navigationGroup = 'Pengaturan';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
+    protected static ?string $navigationLabel = 'Pengguna & Hak Akses';
+    protected static ?string $modelLabel = 'Pengguna Portal';
+    protected static ?string $pluralModelLabel = 'Pengguna Portal';
+    protected static \UnitEnum|string|null $navigationGroup = 'Pengaturan Sistem';
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'name';
 
