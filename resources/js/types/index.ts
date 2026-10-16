@@ -140,10 +140,15 @@ export interface Page {
 
 export interface Statistic {
     id: number;
-    label: string;
-    value: string;
-    icon: string | null;
-    order: number;
+    title: string;
+    category_id?: string | null;
+    year?: number | null;
+    region_id?: string | null;
+    value: number | string;
+    unit?: string | null;
+    source?: string | null;
+    status?: 'draft' | 'published' | string;
+    metadata_json?: Record<string, any> | null;
 }
 
 // Home page props
@@ -154,6 +159,7 @@ export interface HomeProps {
         services: number;
         facilities: number;
     };
+    indicators?: Statistic[];
 }
 
 export interface AgendaEvent {

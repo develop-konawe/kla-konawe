@@ -12,3 +12,4 @@ class KlaPublicWebsiteGuideWidget extends Widget
 
     protected string $view = 'filament.widgets.kla-public-website-guide';
 }
+

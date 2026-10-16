@@ -130,6 +130,26 @@
 
                     <tr class="hover:bg-gray-50/60 dark:hover:bg-gray-900/60 transition">
                         <td class="py-3 px-4 font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+                            Data &amp; Indikator KLA
+                        </td>
+                        <td class="py-3 px-4 text-gray-600 dark:text-gray-300">
+                            Mempublikasikan capaian realisasi 24 indikator evaluasi KLA per klaster (Cakupan Akta Lahir, KIA, Puskesmas Ramah Anak, Sekolah Ramah Anak, Penanganan Kasus) yang diampu oleh OPD terkait.
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="flex flex-col gap-1">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-cyan-50 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-400 font-mono text-[11px]">Beranda (#indikator-kla)</span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-400 font-mono text-[11px]">/publikasi (Tab Data)</span>
+                            </div>
+                            <div class="text-[11px] text-gray-500 mt-1">Kartu capaian interaktif, angka persentase/unit, tahun evaluasi, dan OPD pengampu.</div>
+                        </td>
+                        <td class="py-3 px-4">
+                            <a href="{{ route('filament.admin.resources.statistics.index') }}" class="font-bold text-primary-600 hover:underline">Kelola Indikator &rarr;</a>
+                        </td>
+                    </tr>
+
+                    <tr class="hover:bg-gray-50/60 dark:hover:bg-gray-900/60 transition">
+                        <td class="py-3 px-4 font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             <span class="w-2 h-2 rounded-full bg-purple-500"></span>
                             Halaman & Profil KLA
                         </td>
@@ -183,3 +203,4 @@
         </div>
     </x-filament::section>
 </x-filament-widgets::widget>
+

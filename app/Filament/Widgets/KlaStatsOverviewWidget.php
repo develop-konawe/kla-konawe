@@ -6,6 +6,7 @@ use App\Models\Aspiration;
 use App\Models\Facility;
 use App\Models\Publication;
 use App\Models\Service;
+use App\Models\Statistic;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -18,6 +19,7 @@ class KlaStatsOverviewWidget extends BaseWidget
         $servicesCount = Service::where('status', 'published')->count();
         $facilitiesCount = Facility::where('is_child_friendly', true)->count();
         $publicationsCount = Publication::where('status', 'published')->count();
+        $indicatorsCount = Statistic::where('status', 'published')->count();
         $aspirationsPending = Aspiration::where('status', 'draft')->orWhere('status', 'pending')->count();
         $aspirationsTotal = Aspiration::count();
 
@@ -32,6 +34,11 @@ class KlaStatsOverviewWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-building-office')
                 ->color('primary'),
 
+            Stat::make('Indikator Capaian KLA', $indicatorsCount)
+                ->description('Tampil di Beranda & Publikasi')
+                ->descriptionIcon('heroicon-m-chart-bar')
+                ->color('warning'),
+
             Stat::make('Publikasi & Dokumen KLA', $publicationsCount)
                 ->description('Regulasi & panduan terbuka (/publikasi)')
                 ->descriptionIcon('heroicon-m-book-open')
@@ -40,7 +47,8 @@ class KlaStatsOverviewWidget extends BaseWidget
             Stat::make('Aspirasi Suara Anak', $aspirationsTotal)
                 ->description($aspirationsPending > 0 ? "{$aspirationsPending} menunggu ditinjau" : 'Semua sudah ditinjau')
                 ->descriptionIcon('heroicon-m-chat-bubble-bottom-center-text')
-                ->color($aspirationsPending > 0 ? 'warning' : 'gray'),
+                ->color($aspirationsPending > 0 ? 'danger' : 'gray'),
         ];
     }
 }
+

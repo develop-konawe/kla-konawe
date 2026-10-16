@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Facility;
 use App\Models\Post;
 use App\Models\Service;
+use App\Models\Statistic;
 use App\Services\BeritaService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -43,10 +44,18 @@ class HomeController extends Controller
             'facilities' => Facility::where('is_child_friendly', true)->count(),
         ];
 
+        // Published KLA Indicators / Statistics
+        $indicators = Statistic::where('status', 'published')
+            ->orderBy('year', 'desc')
+            ->orderBy('category_id', 'asc')
+            ->take(12)
+            ->get();
+
         return Inertia::render('Home', [
             'latestNews'     => $latestNews,
             'upcomingEvents' => $upcomingEvents,
             'stats'          => $stats,
+            'indicators'     => $indicators,
         ]);
     }
 }

@@ -2,7 +2,7 @@ import { Link } from '@inertiajs/react';
 import { motion, useInView } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import AppLayout from '../layouts/AppLayout';
-import { type AgendaEvent, type HomeProps, type Post } from '../types';
+import { type AgendaEvent, type HomeProps, type Post, type Statistic } from '../types';
 
 // ─── Animated Counter ────────────────────────────────────────────────────────
 function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
@@ -323,8 +323,148 @@ function KlasterCard({ klaster, index }: { klaster: typeof klaKlusters[0]; index
     );
 }
 
+// ─── KLA Official Indicators (Statistics) ─────────────────────────────────────
+const fallbackIndicators: Statistic[] = [
+    {
+        id: 1,
+        title: 'Cakupan Kepemilikan Akta Kelahiran Anak (0-17 Tahun)',
+        category_id: 'Klaster 1',
+        year: 2025,
+        region_id: 'Kabupaten Konawe',
+        value: '94.80',
+        unit: '%',
+        source: 'Dinas Dukcapil Kab. Konawe',
+        status: 'published',
+        metadata_json: { target_nasional: 95 },
+    },
+    {
+        id: 2,
+        title: 'Penurunan Angka Dispensasi Kawin Anak Usia Dini',
+        category_id: 'Klaster 2',
+        year: 2025,
+        region_id: 'Kabupaten Konawe',
+        value: '38.50',
+        unit: '% penurunan',
+        source: 'Pengadilan Agama Unaaha & DP3A',
+        status: 'published',
+        metadata_json: { target_nasional: 30 },
+    },
+    {
+        id: 3,
+        title: 'Jumlah Puskesmas Ramah Anak (PRAP) Terstandarisasi',
+        category_id: 'Klaster 3',
+        year: 2025,
+        region_id: 'Kabupaten Konawe',
+        value: '24',
+        unit: 'Puskesmas',
+        source: 'Dinas Kesehatan Kab. Konawe',
+        status: 'published',
+        metadata_json: { total_puskesmas: 28 },
+    },
+    {
+        id: 4,
+        title: 'Jumlah Sekolah Ramah Anak (SRA) Jenjang SD & SMP',
+        category_id: 'Klaster 4',
+        year: 2025,
+        region_id: 'Kabupaten Konawe',
+        value: '65',
+        unit: 'Sekolah',
+        source: 'Dinas Pendidikan & Kebudayaan',
+        status: 'published',
+    },
+    {
+        id: 5,
+        title: 'Persentase Penanganan Kasus Kekerasan Anak Hingga Tuntas',
+        category_id: 'Klaster 5',
+        year: 2025,
+        region_id: 'Kabupaten Konawe',
+        value: '100',
+        unit: '%',
+        source: 'UPTD PPA Kab. Konawe',
+        status: 'published',
+    },
+];
+
+function IndicatorCard({ stat, index }: { stat: Statistic; index: number }) {
+    const getKlasterColor = (cat?: string | null) => {
+        if (!cat) return { badge: 'bg-emerald-50 text-emerald-700 border-emerald-200', text: 'text-emerald-600' };
+        if (cat.includes('1')) return { badge: 'bg-emerald-50 text-emerald-700 border-emerald-200', text: 'text-emerald-600' };
+        if (cat.includes('2')) return { badge: 'bg-amber-50 text-amber-700 border-amber-200', text: 'text-amber-600' };
+        if (cat.includes('3')) return { badge: 'bg-rose-50 text-rose-700 border-rose-200', text: 'text-rose-600' };
+        if (cat.includes('4')) return { badge: 'bg-blue-50 text-blue-700 border-blue-200', text: 'text-blue-600' };
+        if (cat.includes('5')) return { badge: 'bg-purple-50 text-purple-700 border-purple-200', text: 'text-purple-600' };
+        return { badge: 'bg-teal-50 text-teal-700 border-teal-200', text: 'text-teal-600' };
+    };
+
+    const color = getKlasterColor(stat.category_id);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45, delay: (index % 6) * 0.08 }}
+            className="group bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate-100 flex flex-col justify-between relative overflow-hidden"
+        >
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-100/60 to-transparent rounded-bl-full pointer-events-none group-hover:scale-125 transition-transform duration-500" />
+
+            <div>
+                {/* Badges: Klaster & Year */}
+                <div className="flex items-center justify-between gap-2 mb-4">
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${color.badge}`}>
+                        {stat.category_id || 'Indikator KLA'}
+                    </span>
+                    {stat.year && (
+                        <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                            Tahun {stat.year}
+                        </span>
+                    )}
+                </div>
+
+                {/* Big Metric Value */}
+                <div className="flex items-baseline gap-2 mb-3">
+                    <span className={`text-4xl font-black tracking-tight ${color.text}`}>
+                        {stat.value}
+                    </span>
+                    {stat.unit && (
+                        <span className="text-sm font-bold text-slate-500">{stat.unit}</span>
+                    )}
+                </div>
+
+                {/* Title */}
+                <h4 className="text-base font-bold text-slate-900 group-hover:text-primary-600 transition-colors leading-snug line-clamp-2 mb-2">
+                    {stat.title}
+                </h4>
+            </div>
+
+            {/* Footer: OPD Source & Region */}
+            <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+                <div className="flex items-center gap-1.5 truncate">
+                    <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    <span className="truncate">{stat.source || 'Gugus Tugas KLA Konawe'}</span>
+                </div>
+                {stat.region_id && (
+                    <span className="text-[11px] font-bold text-slate-400 flex-shrink-0">{stat.region_id}</span>
+                )}
+            </div>
+        </motion.div>
+    );
+}
+
 // ─── Home Page ────────────────────────────────────────────────────────────────
-export default function Home({ latestNews, upcomingEvents, stats }: HomeProps) {
+export default function Home({ latestNews, upcomingEvents, stats, indicators }: HomeProps) {
+    const [selectedKlaster, setSelectedKlaster] = useState<string>('all');
+    const displayIndicators = (indicators && indicators.length > 0) ? indicators : fallbackIndicators;
+
+    const filteredIndicators = selectedKlaster === 'all'
+        ? displayIndicators
+        : displayIndicators.filter((item) => {
+            const cat = (item.category_id || '').toLowerCase();
+            return cat.includes(selectedKlaster.toLowerCase());
+        });
+
     const containerVariants = {
         hidden: {},
         visible: { transition: { staggerChildren: 0.05 } },
@@ -572,6 +712,95 @@ export default function Home({ latestNews, upcomingEvents, stats }: HomeProps) {
                             </svg>
                         </Link>
                     </motion.div>
+                </div>
+            </section>
+
+            {/* ── KLA Official Indicators & Statistics Section ── */}
+            <section id="indikator-kla" className="py-24 bg-slate-50/80 border-t border-slate-100 relative scroll-mt-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Header */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                        className="text-center max-w-3xl mx-auto mb-12"
+                    >
+                        <div className="inline-flex items-center space-x-2 bg-emerald-100 text-emerald-800 px-5 py-2 rounded-full text-sm font-bold mb-4 border border-emerald-200">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <span>Data Resmi Evaluasi KLA</span>
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 leading-tight">
+                            Capaian &amp; Indikator{' '}
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
+                                KLA Konawe
+                            </span>
+                        </h2>
+                        <p className="text-lg text-gray-600 font-medium leading-relaxed">
+                            Transparansi indikator capaian pemenuhan hak anak dan perlindungan khusus anak yang dihimpun bersama Gugus Tugas dan OPD Kabupaten Konawe.
+                        </p>
+                    </motion.div>
+
+                    {/* Filter Pills */}
+                    <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+                        {[
+                            { id: 'all', label: 'Semua Klaster' },
+                            { id: '1', label: 'Klaster 1: Hak Sipil' },
+                            { id: '2', label: 'Klaster 2: Pengasuhan' },
+                            { id: '3', label: 'Klaster 3: Kesehatan' },
+                            { id: '4', label: 'Klaster 4: Pendidikan' },
+                            { id: '5', label: 'Klaster 5: Perlindungan' },
+                        ].map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setSelectedKlaster(tab.id)}
+                                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 ${
+                                    selectedKlaster === tab.id
+                                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/25 scale-105'
+                                        : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200'
+                                }`}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Indicators Grid */}
+                    {filteredIndicators.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                            {filteredIndicators.map((stat, i) => (
+                                <IndicatorCard key={stat.id || i} stat={stat} index={i} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12 bg-white rounded-3xl border border-slate-100 max-w-md mx-auto mb-12 p-8">
+                            <p className="text-slate-500 font-medium">Belum ada data indikator yang dipublikasikan untuk kategori ini.</p>
+                        </div>
+                    )}
+
+                    {/* Action links */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <Link
+                            href="/publikasi"
+                            className="inline-flex items-center space-x-2 bg-emerald-600 text-white hover:bg-emerald-700 font-bold py-3 px-7 rounded-full shadow-md shadow-emerald-500/20 transition hover:-translate-y-0.5 text-sm"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span>Lihat Seluruh Regulasi &amp; Publikasi KLA</span>
+                        </Link>
+                        <Link
+                            href="/tentang-kla"
+                            className="inline-flex items-center space-x-2 bg-white text-slate-700 hover:text-emerald-700 font-bold py-3 px-7 rounded-full border border-slate-200 hover:border-emerald-300 transition hover:-translate-y-0.5 text-sm"
+                        >
+                            <span>Pelajari 24 Indikator Lengkap</span>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                        </Link>
+                    </div>
                 </div>
             </section>
 

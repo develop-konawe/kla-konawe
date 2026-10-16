@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Statistics\Tables;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -58,6 +59,13 @@ class StatisticsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                Action::make('view_public')
+                    ->label('Lihat di Web')
+                    ->icon('heroicon-m-arrow-top-right-on-square')
+                    ->color('info')
+                    ->tooltip('Buka bagian Capaian Indikator KLA di website publik')
+                    ->url(fn () => url('/#indikator-kla'))
+                    ->openUrlInNewTab(),
                 EditAction::make(),
             ])
             ->toolbarActions([
