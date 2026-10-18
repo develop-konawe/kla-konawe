@@ -56,6 +56,8 @@ php artisan package:discover --ansi 2>/dev/null || true
 # 4. Fix permissions
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 777 /var/www/html/storage/logs
+touch /var/www/html/storage/logs/laravel.log && chmod 666 /var/www/html/storage/logs/laravel.log || true
 
 # 5. Run automatic migrations if requested
 if [ "${AUTO_MIGRATE:-false}" = "true" ]; then
