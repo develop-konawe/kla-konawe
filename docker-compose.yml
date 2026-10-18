@@ -51,6 +51,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    extra_hosts:
+      - "berita.konawekab.go.id:103.170.89.162"
+      - "orpeg.konawekab.go.id:103.170.89.162"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     networks:
       - portal_kla_net
 

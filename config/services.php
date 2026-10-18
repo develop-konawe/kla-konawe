@@ -37,8 +37,9 @@ return [
 
     'berita' => [
         'base_url' => env('BERITA_BASE_URL', 'https://berita.konawekab.go.id/api/v1'),
-        'api_key' => env('BERITA_API_KEY'),
-        'timeout' => (int) env('BERITA_TIMEOUT', 10),
+        'api_key' => env('BERITA_API_KEY', '418595a9a453178dbdc3ea13af01789324f967e9cd60069e624de8b92003a613'),
+        'timeout' => (int) env('BERITA_TIMEOUT', 15),
+        'verify_ssl' => (bool) env('BERITA_VERIFY_SSL', true),
     ],
 
     'orpeg' => [
