@@ -384,6 +384,15 @@ class BeritaService
      */
     public function getKonaweBeritaFallbackItems(): array
     {
+        $snapshotPath = base_path('database/data/berita_konawe_snapshot.json');
+        if (file_exists($snapshotPath)) {
+            $json = @file_get_contents($snapshotPath);
+            $items = json_decode($json, true);
+            if (is_array($items) && ! empty($items)) {
+                return array_map(fn (array $item) => $this->formatItem($item), $items);
+            }
+        }
+
         return [
             [
                 'id' => 204,

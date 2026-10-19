@@ -16,14 +16,15 @@ class FetchBeritaCommand extends Command
                             {--limit=5 : Number of news items to fetch} 
                             {--search= : Search keyword} 
                             {--page=1 : Page number}
-                            {--clear-cache : Clear cached berita API items before fetching}';
+                            {--clear-cache : Clear cached berita API items before fetching}
+                            {--sync : Fetch all news items from live API and save to database/data/berita_konawe_snapshot.json}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Test and diagnose connection to Konawe Berita API';
+    protected $description = 'Test, diagnose, or sync connection to Konawe Berita API';
 
     /**
      * Execute the console command.
@@ -34,6 +35,7 @@ class FetchBeritaCommand extends Command
         $search = $this->option('search');
         $page = (int) $this->option('page');
         $clearCache = (bool) $this->option('clear-cache');
+        $sync = (bool) $this->option('sync');
 
         if ($clearCache) {
             $service->clearCache();
@@ -43,6 +45,63 @@ class FetchBeritaCommand extends Command
         $baseUrl = $service->getBaseUrl();
         $apiKey = $service->getApiKey();
         $host = parse_url($baseUrl, PHP_URL_HOST);
+
+        if ($sync) {
+            $this->info("==========================================");
+            $this->info(" Sinkronisasi Snapshot Berita API Konawe ");
+            $this->info("==========================================");
+            $all = [];
+            $currentPage = 1;
+            $lastPage = 1;
+            do {
+                $url = "{$baseUrl}/berita";
+                try {
+                    $response = \Illuminate\Support\Facades\Http::timeout(15)
+                        ->acceptJson()
+                        ->get($url, [
+                            'api_key'  => $apiKey,
+                            'page'     => $currentPage,
+                            'per_page' => 50,
+                        ]);
+
+                    if (! $response->successful()) {
+                        $this->error("Gagal mengambil halaman {$currentPage}: HTTP " . $response->status());
+                        break;
+                    }
+
+                    $json = $response->json();
+                    $items = $json['data'] ?? [];
+                    if (empty($items)) {
+                        break;
+                    }
+
+                    $all = array_merge($all, $items);
+                    $lastPage = $json['meta']['last_page'] ?? 1;
+                    $this->line(" -> Halaman {$currentPage}/{$lastPage} terunduh (" . count($items) . " item)");
+                    $currentPage++;
+                } catch (\Throwable $e) {
+                    $this->error("Koneksi gagal atau timed out: " . $e->getMessage());
+                    break;
+                }
+            } while ($currentPage <= $lastPage);
+
+            if (! empty($all)) {
+                $dir = base_path('database/data');
+                if (! is_dir($dir)) {
+                    @mkdir($dir, 0755, true);
+                }
+                file_put_contents(
+                    $dir . '/berita_konawe_snapshot.json',
+                    json_encode($all, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+                );
+                $this->info("\n[SUKSES] Berhasil menyimpan " . count($all) . " berita ke database/data/berita_konawe_snapshot.json!");
+                $service->clearCache();
+                return Command::SUCCESS;
+            }
+
+            $this->warn("\nTidak ada berita yang dapat disinkronkan.");
+            return Command::FAILURE;
+        }
 
         $this->info("==========================================");
         $this->info("    Diagnostik Koneksi Berita API KLA     ");
